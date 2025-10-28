@@ -1,0 +1,155 @@
+﻿@page "{id:int}"
+@model RazorEcom.Pages.Products.DetailModel
+@{
+    ViewData["Title"] = Model.Product?.Name ?? "Chi tiết sản phẩm";
+}
+
+<div class="container py-5">
+    @if (Model.Product != null && Model.DefaultVariant != null)
+    {
+        <div class="row g-5">
+            <!-- Ảnh sản phẩm -->
+            <div class="col-md-6">
+                <img id="mainProductImage"
+                     src="@Model.DefaultVariant.ImageUrl"
+                     class="img-fluid rounded-4 shadow-sm w-100"
+                     style="aspect-ratio: 1 / 1; object-fit: cover;"
+                     alt="@Model.Product.Name"
+                     onerror="this.src='https://placehold.co/600x600/212529/FFF?text=Image+Error'" />
+            </div>
+
+            <!-- Thông tin sản phẩm -->
+            <div class="col-md-6 text-light">
+                <h2 class="fw-bold">@Model.Product.Name</h2>
+
+                <!-- GIÁ -->
+                <p id="mainProductPrice" class="fw-semibold text-warning fs-3 mt-3">
+                    @Model.DefaultVariant.Price.ToString("C0")
+                </p>
+
+                <!-- MÔ TẢ -->
+                <p class="text-muted">@Model.Product.Description</p>
+
+                <!-- THÔNG TIN THÊM (SKU, MATERIAL) -->
+                <div class="mb-3">
+                    <p class="mb-1">
+                        <span class="fw-semibold">SKU:</span>
+                        <span id="mainProductSku" class="text-muted">@Model.DefaultVariant.Sku</span>
+                    </p>
+                    <p class="mb-0">
+                        <span class="fw-semibold">Chất liệu:</span>
+                        <span id="mainProductMaterial" class="text-muted">@Model.DefaultVariant.Material</span>
+                    </p>
+                </div>
+
+
+                <form method="post" class="mt-4">
+                    <!-- Phải có input này để gửi ID sản phẩm (Product.Id) khi POST -->
+                    <input type="hidden" asp-for="Id" />
+
+                    <!-- DROPDOWN CHỌN BIẾN THỂ -->
+                    <div class="mb-3">
+                        <label for="variantSelector" class="form-label fw-semibold">Chọn phiên bản</label>
+                        <select id="variantSelector"
+                                asp-for="SelectedVariantId"
+                                asp-items="Model.VariantOptions"
+                                class="form-select bg-dark text-light">
+                        </select>
+                        <span asp-validation-for="SelectedVariantId" class="text-danger"></span>
+                    </div>
+
+                    <!-- SỐ LƯỢNG -->
+                    <div class="mb-3">
+                        <label asp-for="Quantity" class="form-label fw-semibold">Số lượng</label>
+                        <input asp-for="Quantity" type="number" min="1" class="form-control bg-dark text-light" style="max-width: 100px;" />
+                        <span asp-validation-for="Quantity" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-2 mt-3">
+                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger text-center">
+            Sản phẩm không tồn tại hoặc chưa có biến thể.
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // SỬA LỖI SYNTAXERROR:
+        // Dùng vòng lặp 'for' thay vì 'foreach' để xử lý dấu phẩy (,)
+        // ở cuối đối tượng, ngăn ngừa lỗi SyntaxError.
+        const variantsData = {
+            @if (Model.Product != null && Model.Product.Variants != null)
+            {
+                    // SỬA LỖI CS1061: Chuyển ICollection thành List để có thể dùng index [i]
+                    var variantsList = Model.Product.Variants.ToList();
+
+                    @for (int i = 0; i < variantsList.Count; i++)
+                    {
+                            var variant = variantsList[i]; // Đã sửa
+
+                            // Mã hóa JS an toàn cho các chuỗi
+                            var imageUrl = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(variant.ImageUrl ?? Model.Product.ImageUrl ?? "");
+                            var material = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(variant.Material ?? "");
+                            var sku = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(variant.Sku ?? "");
+
+                            @Html.Raw($"\"{variant.Id}\": {{")
+                            @Html.Raw($"\"price\": {variant.Price},")
+                            // Gửi dưới dạng số
+                            @:"\"imageUrl\": \"@imageUrl\","
+                            @:"\"material\": \"@material\","
+                            @:"\"sku\": \"@sku\""
+                            @Html.Raw("}")
+                            // Đóng object
+
+                            // Chỉ thêm dấu phẩy nếu KHÔNG phải là item cuối cùng
+                            if (i < variantsList.Count - 1) // Đã sửa
+                            {
+                                    @Html.Raw(",")
+                                ;
+                            }
+                    }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const variantSelect = document.getElementById('variantSelector');
+            const mainImage = document.getElementById('mainProductImage');
+            const mainPrice = document.getElementById('mainProductPrice');
+            const mainSku = document.getElementById('mainProductSku');
+            const mainMaterial = document.getElementById('mainProductMaterial');
+
+            // Định dạng tiền tệ
+            const priceFormatter = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                maximumFractionDigits: 0
+            });
+
+            if (variantSelect) {
+                variantSelect.addEventListener('change', function() {
+                    const selectedId = this.value;
+                    const selectedVariantData = variantsData[selectedId];
+
+                    if (selectedVariantData) {
+                        // Cập nhật giá, ảnh, sku, và material
+                        mainImage.src = selectedVariantData.imageUrl;
+                        mainPrice.innerText = priceFormatter.format(selectedVariantData.price);
+                        mainSku.innerText = selectedVariantData.sku;
+                        mainMaterial.innerText = selectedVariantData.material;
+                    }
+                });
+            }
+        });
+    </script>
+}
+

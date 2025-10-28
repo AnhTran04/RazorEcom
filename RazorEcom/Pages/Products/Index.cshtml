@@ -1,0 +1,83 @@
+﻿@page
+@model RazorEcom.Pages.Products.IndexModel
+@{
+    ViewData["Title"] = "Shop";
+}
+
+<div class="container py-5">
+    <h1 class="fw-bold text-light mb-4">Cửa hàng</h1>
+
+    <!-- Controls: Filter + Sort (Server-side) -->
+    <!-- Bọc các control trong 1 form GET -->
+    <form method="get">
+        <div class="row mb-4 align-items-end">
+            <div class="col-md-5 mb-2">
+                <label for="categorySelect" class="form-label text-light fw-semibold">Chọn danh mục:</label>
+                <!--
+                  - asp-for liên kết với thuộc tính CategoryId trong PageModel.
+                  - asp-items tải danh sách Categories.
+                -->
+                <select id="categorySelect" name="CategoryId" asp-for="CategoryId"
+                        asp-items="@(new SelectList(Model.Categories, "Id", "Name"))"
+                        class="form-select w-auto bg-dark text-light">
+                    <option value="">Tất cả sản phẩm</option>
+                </select>
+            </div>
+            <div class="col-md-5 mb-2">
+                <label for="sortSelect" class="form-label text-light fw-semibold">Sắp xếp:</label>
+                <!--
+                  - asp-for liên kết với thuộc tính SortBy.
+                -->
+                <select id="sortSelect" name="SortBy" asp-for="SortBy"
+                        class="form-select w-auto bg-dark text-light">
+                    <option value="">Mới nhất</option>
+                    <option value="priceAsc">Giá: thấp → cao</option>
+                    <option value="priceDesc">Giá: cao → thấp</option>
+                </select>
+            </div>
+            <div class="col-md-2 mb-2">
+                <button type="submit" class="btn btn-primary w-100">Lọc</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Products List -->
+    <div class="row g-4" id="productsContainer">
+        @if (Model.ProductVariants.Any())
+        {
+            @foreach (var variant in Model.ProductVariants)
+            {
+                <div class="col-md-4 product-card">
+                    <div class="card h-100 shadow-sm rounded-4 bg-dark text-light">
+                        <!-- Lấy ảnh từ Variant, không phải từ Product -->
+                        <img src="@variant.ImageUrl" class="card-img-top" alt="@variant.Product.Name"
+                             style="height: 300px; object-fit: cover;"
+                             onerror="this.src='https://placehold.co/300x300/212529/FFF?text=Image+Error'" />
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@variant.Product.Name</h5>
+                            <p class="card-text text-info small">@variant.Size - @variant.Color</p>
+                            <p class="card-text text-warning fw-semibold">@variant.Price.ToString("C0")</p>
+
+                            <p class="card-text text-muted small flex-grow-1">
+                                @(variant.Product.Description.Length > 100 ? variant.Product.Description.Substring(0, 100) + "..." : variant.Product.Description)
+                            </p>
+
+                            <!-- Gửi ProductId (gốc) đến trang Detail -->
+                            <a asp-page="./Detail" asp-route-id="@variant.ProductId" class="btn btn-primary mt-auto rounded-pill">
+                                Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <p class="text-light text-center fs-4">Không tìm thấy sản phẩm nào phù hợp.</p>
+                <p class="text-light text-center">Vui lòng kiểm tra lại xem bạn đã seed dữ liệu cho `ProductVariants` chưa (tệp đang mở trong Canvas).</p>
+            </div>
+        }
+    </div>
+</div>

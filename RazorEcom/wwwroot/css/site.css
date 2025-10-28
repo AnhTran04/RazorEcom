@@ -1,0 +1,27 @@
+﻿/* Sidebar giỏ hàng */
+.cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -350px; /* ẩn ngoài màn hình */
+    width: 350px;
+    height: 100%;
+    background-color: #f8f9fa;
+    color: #000;
+    transition: right 0.3s ease;
+    z-index: 1050; /* cao hơn navbar */
+    display: flex;
+    flex-direction: column;
+}
+
+    .cart-sidebar.active {
+        right: 0; /* hiện khi active */
+    }
+
+.cart-items {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.cart-header, .cart-footer {
+    background-color: #e9ecef;
+}

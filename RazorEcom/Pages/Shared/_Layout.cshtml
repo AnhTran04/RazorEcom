@@ -1,0 +1,125 @@
+﻿@* _Layout.cshtml *@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RazorEcom</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="~/css/site.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1e1e1e; /* dark tone */
+            color: #f0f0f0;
+        }
+
+        a {
+            color: #ff7f50;
+        }
+
+            a:hover {
+                color: #ffa07a;
+                text-decoration: none;
+            }
+
+        .navbar {
+            background-color: #2b2b2b;
+        }
+
+        .footer {
+            background-color: #2b2b2b;
+            color: #ccc;
+            padding: 2rem 0;
+        }
+
+        .card {
+            background-color: #2e2e2e;
+            border: none;
+            color: #f0f0f0;
+        }
+
+        .btn-primary {
+            background-color: #ff7f50;
+            border-color: #ff7f50;
+        }
+
+            .btn-primary:hover {
+                background-color: #ffa07a;
+                border-color: #ffa07a;
+            }
+
+        /* Đảm bảo các icon trên navbar có màu phù hợp */
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.75); /* Màu chữ nav-link sáng hơn */
+        }
+
+            .navbar-nav .nav-link:hover {
+                color: #ff7f50; /* Màu cam khi hover */
+            }
+    </style>
+</head>
+<body>
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" asp-page="/Index">RazorEcom</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <!-- Đổi thành me-auto để đẩy các mục sau sang phải -->
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Products/Index">Shop</a>
+                    </li>
+                </ul>
+
+                <!--
+                    PHẦN ĐÃ SỬA:
+                    Thay thế các link Login/Register cố định bằng
+                    Partial View để hiển thị động.
+                -->
+                <ul class="navbar-nav ms-auto">
+                    <partial name="_LoginPartial" />
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="container my-5">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container text-center">
+            <p>&copy; @DateTime.Now.Year RazorEcom. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+

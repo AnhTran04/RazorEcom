@@ -1,0 +1,75 @@
+﻿@page
+@model RazorEcom.Pages.Account.ProfileModel
+@{
+    ViewData["Title"] = "Tài khoản của tôi";
+}
+
+<div class="container py-5 text-light">
+    <div class="row">
+        <!-- Sidebar Điều hướng -->
+        <div class="col-md-3">
+            <div class="card bg-dark border-secondary rounded-4 p-3">
+                <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+
+                    <!-- Liên kết Trang cá nhân (Active) -->
+                    <a class="nav-link text-light active" id="profile-tab" data-bs-toggle="pill" href="#profile" role="tab" aria-controls="profile" aria-selected="true">
+                        <i class="bi bi-person-fill me-2"></i> Thông tin cá nhân
+                    </a>
+
+                    <!-- Liên kết (Ví dụ) đến Trang Đơn hàng -->
+                    <a class="nav-link text-light" asp-page="/User/OrderDetail">
+                        <i class="bi bi-box-seam me-2"></i> Đơn hàng của tôi
+                    </a>
+
+                    <!-- Liên kết (Ví dụ) đến Sổ địa chỉ -->
+                    <a class="nav-link text-light" asp-page="/User/Account/AddressBook">
+                        <i class="bi bi-journal-bookmark me-2"></i> Sổ địa chỉ
+                    </a>
+
+                    <!-- Nút Đăng xuất -->
+                    <hr class="border-secondary">
+                    <form method="post" asp-page-handler="Logout" class="w-100">
+                        <button type="submit" class="nav-link text-danger w-100 text-start">
+                            <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nội dung chính -->
+        <div class="col-md-9">
+            <div class="tab-content">
+                <!-- Tab Nội dung Thông tin cá nhân -->
+                <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="card bg-dark border-secondary rounded-4 p-4">
+                        <h2 class="fw-bold mb-4">Thông tin cá nhân</h2>
+
+                        @if (Model.Input != null)
+                        {
+                            <dl class="row">
+                                <dt class="col-sm-3">Họ và tên:</dt>
+                                <dd class="col-sm-9">@Model.Input.FullName</dd>
+
+                                <dt class="col-sm-3">Email:</dt>
+                                <dd class="col-sm-9">@Model.Input.Email</dd>
+
+                                <dt class="col-sm-3">Số điện thoại:</dt>
+                                <dd class="col-sm-9">@Model.Input.PhoneNumber</dd>
+                            </dl>
+                        }
+                        else
+                        {
+                            <p class="text-danger">Không thể tải thông tin người dùng.</p>
+                        }
+
+                        <hr class="border-secondary">
+                        <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-primary rounded-pill mt-3" style="max-width: 200px;">
+                            Cập nhật thông tin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+﻿@page
+@model RazorEcom.Areas.Identity.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center g-5">
+        <!-- Cột bên trái: ảnh hoặc banner -->
+        <div class="col-lg-6 text-center d-none d-lg-block">
+            <img src="~/images/register-banner.svg" alt="Register Banner" class="img-fluid w-75">
+            <h3 class="mt-4 fw-semibold text-primary">Tham gia cùng chúng tôi ngay hôm nay!</h3>
+            <p class="text-muted">Mua sắm dễ dàng, ưu đãi hấp dẫn và quản lý tài khoản tiện lợi.</p>
+        </div>
+
+        <!-- Cột bên phải: Form đăng ký -->
+        <div class="col-md-8 col-lg-5">
+            <div class="card border-0 shadow-lg rounded-4 p-4">
+                <div class="card-body">
+                    <h2 class="text-center fw-bold text-dark mb-4">@ViewData["Title"]</h2>
+
+                    <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="needs-validation" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.FullName" class="form-label fw-semibold">Họ và tên</label>
+                            <input asp-for="Input.FullName" class="form-control form-control-lg" placeholder="Nguyễn Văn A" />
+                            <span asp-validation-for="Input.FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label fw-semibold">Email</label>
+                            <input asp-for="Input.Email" class="form-control form-control-lg" placeholder="example@email.com" />
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.PhoneNumber" class="form-label fw-semibold">Số điện thoại</label>
+                            <input asp-for="Input.PhoneNumber" class="form-control form-control-lg" placeholder="0987xxxxxx" />
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label fw-semibold">Mật khẩu</label>
+                            <div class="input-group">
+                                <input asp-for="Input.Password" class="form-control form-control-lg" placeholder="••••••••" />
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            </div>
+                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.ConfirmPassword" class="form-label fw-semibold">Xác nhận mật khẩu</label>
+                            <div class="input-group">
+                                <input asp-for="Input.ConfirmPassword" class="form-control form-control-lg" placeholder="Nhập lại mật khẩu" />
+                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                            </div>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-pill mt-3">
+                            <i class="bi bi-person-plus"></i> Tạo tài khoản
+                        </button>
+
+                        <div class="text-center mt-4">
+                            <p class="text-muted mb-0">
+                                Đã có tài khoản?
+                                <a asp-page="./Login" class="text-decoration-none fw-semibold text-primary">Đăng nhập</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
