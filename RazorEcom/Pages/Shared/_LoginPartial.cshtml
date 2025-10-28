@@ -1,66 +1,93 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using RazorEcom.Data
-<!--
-    CHỈNH SỬA "RazorEcom.Data"
-    thành namespace chứa ApplicationUser của bạn nếu cần
--->
+@using RazorEcom.Models
+
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-@if (SignInManager.IsSignedIn(User))
-{
-    <!-- NẾU ĐÃ ĐĂNG NHẬP -->
-    <!-- Icon Giỏ hàng (Giữ nguyên) -->
-    <li class="nav-item">
-        <a class="nav-link" asp-area="" asp-page="/Cart/Index" title="Giỏ hàng">
-            <i class="bi bi-cart fs-5"></i>
-        </a>
-    </li>
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <!--
+          Container cho giỏ hàng và pop-up
+        -->
+        <li class="nav-item cart-popup-container" id="cartPopupContainer">
+            <a class="nav-link" asp-page="/Cart/Index" title="Giỏ hàng">
+                <i class="bi bi-cart position-relative fs-5">
+                    <!-- Badge số lượng (mặc định ẩn) -->
+                    <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle d-none"
+                          style="font-size: 0.6rem; padding: 0.2rem 0.4rem;">
+                        0
+                    </span>
+                </i>
+            </a>
 
-    <!-- THAY ĐỔI: Chuyển icon profile thành Dropdown -->
-    <li class="nav-item dropdown">
-        <!-- Nút bấm dropdown là icon profile -->
-        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Tài khoản">
-            <i class="bi bi-person-circle fs-5"></i>
-        </a>
+            <!-- HTML cho Pop-up (sẽ được JS cập nhật) -->
+            <div class="cart-popup shadow-lg">
+                <div class="cart-popup-body">
+                    <!-- Nội dung giỏ hàng (JS chèn vào đây) -->
+                    <div class="text-center p-3">
+                        <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-popup-total">
+                    <!-- Tổng tiền (JS chèn vào đây) -->
+                </div>
+                <div class="mt-2">
+                    <a asp-page="/Cart/Index" class="btn btn-primary w-100 rounded-pill">
+                        Xem giỏ hàng
+                    </a>
+                </div>
+            </div>
+        </li>
 
-        <!-- Menu xổ xuống (căn lề phải với dropdown-menu-end) -->
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-            <li>
-                <a class="dropdown-item" asp-area="" asp-page="/User/Account/Profile">
-                    <i class="bi bi-person-fill me-2"></i> Thông tin cá nhân
-                </a>
-            </li>
-            <li>
-                <a class="dropdown-item" asp-area="" asp-page="/User/OrderDetail">
-                    <i class="bi bi-box-seam me-2"></i> Đơn hàng của tôi
-                </a>
-            </li>
-            <li>
-                <a class="dropdown-item" asp-area="" asp-page="/User/Account/PaymentMethods">
-                    <i class="bi bi-credit-card me-2"></i> Phương thức thanh toán
-                </a>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-                <!-- Nút Đăng xuất PHẢI là một form POST -->
-                <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
-                    <button type="submit" class="dropdown-item text-danger">
-                        <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
-                    </button>
-                </form>
-            </li>
-        </ul>
-    </li>
-}
-else
-{
-    <!-- NẾU CHƯA ĐĂNG NHẬP -->
-    <li class="nav-item">
-        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Đăng ký</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a>
-    </li>
-}
+        <!-- Menu Dropdown Profile -->
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Tài khoản">
+                <i class="bi bi-person-circle fs-5"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="profileDropdown">
+                <li>
+                    <h6 class="dropdown-header">
+                        Chào, @(UserManager.GetUserName(User))
+                    </h6>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-page="/User/Account/Profile">
+                        <i class="bi bi-person-fill me-2"></i>Thông tin cá nhân
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-page="/User/OrderDetail">
+                        <i class="bi bi-box-seam-fill me-2"></i>Đơn hàng của tôi
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-page="/User/Account/PaymentMethods">
+                        <i class="bi bi-credit-card-fill me-2"></i>Phương thức thanh toán
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                        <button type="submit" class="dropdown-item">
+                            <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <!-- Người dùng chưa đăng nhập (Giữ nguyên) -->
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Đăng ký</a>
+        </li>
+    }
+</ul>
 

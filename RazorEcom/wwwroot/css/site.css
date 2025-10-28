@@ -25,3 +25,30 @@
 .cart-header, .cart-footer {
     background-color: #e9ecef;
 }
+.category-card {
+    display: block;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid #444;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: #f0f0f0;
+    background-color: #2b2b2b;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    font-weight: 500;
+    margin-bottom: 0.5rem; /* Thêm khoảng cách cho mobile */
+}
+
+    .category-card:hover {
+        background-color: #3a3a3a;
+        border-color: #ff7f50; /* Màu cam theme của bạn */
+        color: #f0f0f0;
+    }
+
+    /* Kiểu cho thẻ đang được chọn */
+    .category-card.active {
+        background-color: #ff7f50;
+        border-color: #ff7f50;
+        color: #1e1e1e;
+        font-weight: bold;
+    }

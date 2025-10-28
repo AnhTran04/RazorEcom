@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering; // Cần thiết cho SelectList
 using Microsoft.EntityFrameworkCore;
 using RazorEcom.Data;
 using RazorEcom.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Linq; // Cần thiết cho IQueryable
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace RazorEcom.Pages.Products
 {
@@ -19,35 +22,45 @@ namespace RazorEcom.Pages.Products
         public List<ProductVariants> ProductVariants { get; set; } = new List<ProductVariants>();
         public List<Category> Categories { get; set; } = new List<Category>();
 
-        // BindProperty hỗ trợ GET để nhận giá trị từ query string
         [BindProperty(SupportsGet = true)]
         public int? CategoryId { get; set; }
 
-        // == PHẦN BỊ THIẾU ĐÃ ĐƯỢC THÊM VÀO ==
         [BindProperty(SupportsGet = true)]
-        public string SortBy { get; set; } // Nhận giá trị "priceAsc" hoặc "priceDesc"
+        public string SortBy { get; set; } = "newest"; // Đặt "newest" làm mặc định
+
+        // Tạo SelectList cho các tùy chọn sắp xếp
+        public SelectList SortOptions { get; set; }
 
         public async Task OnGetAsync()
         {
-            // 1. Tải Categories để hiển thị dropdown
+            // 1. Tải Categories (không đổi)
             Categories = await _context.Categories
                 .OrderBy(c => c.Name)
-                .AsNoTracking() // Tối ưu, không cần theo dõi thay đổi
+                .AsNoTracking()
                 .ToListAsync();
 
-            // 2. Xây dựng câu truy vấn
-            var query = _context.ProductVariants
-                .Include(v => v.Product) // Nối bảng để lấy CategoryId
-                .AsNoTracking() // Tối ưu, không cần theo dõi thay đổi
-                .AsQueryable();
+            // 2. Khởi tạo SortOptions
+            var sortList = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "newest", Text = "Mới nhất" },
+                new SelectListItem { Value = "priceAsc", Text = "Giá: thấp → cao" },
+                new SelectListItem { Value = "priceDesc", Text = "Giá: cao → thấp" }
+            };
+            // Gán giá trị SortBy hiện tại cho SelectList
+            SortOptions = new SelectList(sortList, "Value", "Text", SortBy);
 
-            // 3. Lọc (Filter)
+            // 3. Xây dựng câu truy vấn ProductVariants
+            var query = _context.ProductVariants
+                .Include(v => v.Product)
+                .AsNoTracking();
+
+            // 4. Lọc (Filter) theo CategoryId (nếu có)
             if (CategoryId.HasValue)
             {
                 query = query.Where(v => v.Product.CategoryId == CategoryId.Value);
             }
 
-            // 4. Sắp xếp (Sort) - == LOGIC BỊ THIẾU ĐÃ ĐƯỢC THÊM VÀO ==
+            // 5. Sắp xếp (Sort)
             switch (SortBy)
             {
                 case "priceAsc":
@@ -56,14 +69,15 @@ namespace RazorEcom.Pages.Products
                 case "priceDesc":
                     query = query.OrderByDescending(v => v.Price);
                     break;
+                case "newest":
                 default:
-                    query = query.OrderByDescending(v => v.CreatedAt); // Mặc định
+                    // Sắp xếp theo ID biến thể (hoặc CreatedAt nếu bạn muốn)
+                    query = query.OrderByDescending(v => v.Id);
                     break;
             }
 
-            // 5. Thực thi truy vấn
+            // 6. Thực thi truy vấn
             ProductVariants = await query.ToListAsync();
         }
     }
 }
-

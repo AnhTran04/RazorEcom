@@ -1,155 +1,282 @@
-﻿@page "{id:int}"
-@model RazorEcom.Pages.Products.DetailModel
-@{
-    ViewData["Title"] = Model.Product?.Name ?? "Chi tiết sản phẩm";
-}
+﻿@* _Layout.cshtml *@
+<!DOCTYPE html>
+<html lang="vi" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RazorEcom</title>
 
-<div class="container py-5">
-    @if (Model.Product != null && Model.DefaultVariant != null)
-    {
-        <div class="row g-5">
-            <!-- Ảnh sản phẩm -->
-            <div class="col-md-6">
-                <img id="mainProductImage"
-                     src="@Model.DefaultVariant.ImageUrl"
-                     class="img-fluid rounded-4 shadow-sm w-100"
-                     style="aspect-ratio: 1 / 1; object-fit: cover;"
-                     alt="@Model.Product.Name"
-                     onerror="this.src='https://placehold.co/600x600/212529/FFF?text=Image+Error'" />
-            </div>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-            <!-- Thông tin sản phẩm -->
-            <div class="col-md-6 text-light">
-                <h2 class="fw-bold">@Model.Product.Name</h2>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-                <!-- GIÁ -->
-                <p id="mainProductPrice" class="fw-semibold text-warning fs-3 mt-3">
-                    @Model.DefaultVariant.Price.ToString("C0")
-                </p>
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
-                <!-- MÔ TẢ -->
-                <p class="text-muted">@Model.Product.Description</p>
+    <!-- Thêm CSP Meta Tag để cho phép tải tài nguyên -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://code.jquery.com;
+                   style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com;
+                   font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com;
+                   img-src 'self' https://source.unsplash.com https://placehold.co data:;
+                   connect-src 'self';">
 
-                <!-- THÔNG TIN THÊM (SKU, MATERIAL) -->
-                <div class="mb-3">
-                    <p class="mb-1">
-                        <span class="fw-semibold">SKU:</span>
-                        <span id="mainProductSku" class="text-muted">@Model.DefaultVariant.Sku</span>
-                    </p>
-                    <p class="mb-0">
-                        <span class="fw-semibold">Chất liệu:</span>
-                        <span id="mainProductMaterial" class="text-muted">@Model.DefaultVariant.Material</span>
-                    </p>
-                </div>
+    <!-- Custom CSS -->
+    <link href="~/css/site.css" rel="stylesheet" />
 
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1a1a1a; /* Nền tối hơn 1 chút */
+            color: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-                <form method="post" class="mt-4">
-                    <!-- Phải có input này để gửi ID sản phẩm (Product.Id) khi POST -->
-                    <input type="hidden" asp-for="Id" />
+        .navbar {
+            background-color: #2b2b2b;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
 
-                    <!-- DROPDOWN CHỌN BIẾN THỂ -->
-                    <div class="mb-3">
-                        <label for="variantSelector" class="form-label fw-semibold">Chọn phiên bản</label>
-                        <select id="variantSelector"
-                                asp-for="SelectedVariantId"
-                                asp-items="Model.VariantOptions"
-                                class="form-select bg-dark text-light">
-                        </select>
-                        <span asp-validation-for="SelectedVariantId" class="text-danger"></span>
-                    </div>
+        .footer {
+            background-color: #2b2b2b;
+            color: #ccc;
+            padding: 2rem 0;
+            margin-top: auto; /* Đẩy footer xuống dưới */
+        }
 
-                    <!-- SỐ LƯỢNG -->
-                    <div class="mb-3">
-                        <label asp-for="Quantity" class="form-label fw-semibold">Số lượng</label>
-                        <input asp-for="Quantity" type="number" min="1" class="form-control bg-dark text-light" style="max-width: 100px;" />
-                        <span asp-validation-for="Quantity" class="text-danger"></span>
-                    </div>
+        .btn-primary {
+            background-color: #ff7f50; /* Màu cam chính */
+            border-color: #ff7f50;
+            font-weight: 500;
+        }
 
-                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-2 mt-3">
-                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                    </button>
-                </form>
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-danger text-center">
-            Sản phẩm không tồn tại hoặc chưa có biến thể.
-        </div>
-    }
-</div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-
-    <script>
-        // SỬA LỖI SYNTAXERROR:
-        // Dùng vòng lặp 'for' thay vì 'foreach' để xử lý dấu phẩy (,)
-        // ở cuối đối tượng, ngăn ngừa lỗi SyntaxError.
-        const variantsData = {
-            @if (Model.Product != null && Model.Product.Variants != null)
-            {
-                    // SỬA LỖI CS1061: Chuyển ICollection thành List để có thể dùng index [i]
-                    var variantsList = Model.Product.Variants.ToList();
-
-                    @for (int i = 0; i < variantsList.Count; i++)
-                    {
-                            var variant = variantsList[i]; // Đã sửa
-
-                            // Mã hóa JS an toàn cho các chuỗi
-                            var imageUrl = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(variant.ImageUrl ?? Model.Product.ImageUrl ?? "");
-                            var material = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(variant.Material ?? "");
-                            var sku = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(variant.Sku ?? "");
-
-                            @Html.Raw($"\"{variant.Id}\": {{")
-                            @Html.Raw($"\"price\": {variant.Price},")
-                            // Gửi dưới dạng số
-                            @:"\"imageUrl\": \"@imageUrl\","
-                            @:"\"material\": \"@material\","
-                            @:"\"sku\": \"@sku\""
-                            @Html.Raw("}")
-                            // Đóng object
-
-                            // Chỉ thêm dấu phẩy nếu KHÔNG phải là item cuối cùng
-                            if (i < variantsList.Count - 1) // Đã sửa
-                            {
-                                    @Html.Raw(",")
-                                ;
-                            }
-                    }
+            .btn-primary:hover {
+                background-color: #ffa07a;
+                border-color: #ffa07a;
             }
-        };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const variantSelect = document.getElementById('variantSelector');
-            const mainImage = document.getElementById('mainProductImage');
-            const mainPrice = document.getElementById('mainProductPrice');
-            const mainSku = document.getElementById('mainProductSku');
-            const mainMaterial = document.getElementById('mainProductMaterial');
+        /* CSS cho giỏ hàng pop-up */
+        .cart-popup {
+            display: none; /* Ẩn ban đầu */
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background-color: #2e2e2e;
+            border: 1px solid #444;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            border-radius: 0.5rem;
+            z-index: 1050;
+            padding: 1rem;
+        }
 
-            // Định dạng tiền tệ
-            const priceFormatter = new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-                maximumFractionDigits: 0
-            });
+        /* Hiển thị pop-up khi hover vào container */
+        .cart-container:hover .cart-popup {
+            display: block;
+        }
 
-            if (variantSelect) {
-                variantSelect.addEventListener('change', function() {
-                    const selectedId = this.value;
-                    const selectedVariantData = variantsData[selectedId];
+        .cart-item-popup {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #444;
+        }
 
-                    if (selectedVariantData) {
-                        // Cập nhật giá, ảnh, sku, và material
-                        mainImage.src = selectedVariantData.imageUrl;
-                        mainPrice.innerText = priceFormatter.format(selectedVariantData.price);
-                        mainSku.innerText = selectedVariantData.sku;
-                        mainMaterial.innerText = selectedVariantData.material;
+            .cart-item-popup:last-child {
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: none;
+            }
+
+            .cart-item-popup img {
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                border-radius: 0.25rem;
+                margin-right: 1rem;
+            }
+
+        .cart-item-popup-info {
+            flex-grow: 1;
+            font-size: 0.9rem;
+        }
+
+            .cart-item-popup-info .name {
+                font-weight: 500;
+                color: #f0f0f0;
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .cart-item-popup-info .price {
+                font-size: 0.85rem;
+                color: #ff7f50;
+            }
+
+        /* CSS cho khu vực thông báo TempData */
+        .alert-container {
+            position: fixed;
+            top: 80px; /* Dưới navbar */
+            right: 20px;
+            z-index: 1090; /* Cao nhất */
+            width: 350px;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" asp-page="/Index">RazorEcom</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Products/Index">Shop</a>
+                    </li>
+                </ul>
+
+                <!-- Phần logic Đăng nhập/Giỏ hàng -->
+                <partial name="_LoginPartial" />
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- Khu vực hiển thị thông báo (TempData) -->
+    <div class="alert-container">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Thành công!</strong> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Lỗi!</strong> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+    </div>
+
+
+    <!-- Main content -->
+    <main class="container my-5">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container text-center">
+            <p>&copy; @DateTime.Now.Year RazorEcom. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- JavaScript cho Giỏ hàng Pop-up -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cartContainer = document.getElementById('cart-container');
+            const cartPopup = document.getElementById('cart-popup-content');
+            const cartTotal = document.getElementById('cart-popup-total');
+            const cartViewBtn = document.getElementById('cart-popup-view-btn');
+            const cartIcon = document.getElementById('cart-icon-link');
+            let isLoaded = false;
+            let timeoutId;
+
+            async function loadCartPopup() {
+                if (isLoaded) return; // Chỉ tải 1 lần khi di chuột vào
+
+                try {
+                    // Gọi API để lấy dữ liệu giỏ hàng
+                    const response = await fetch('/Api/Cart'); // Gọi API chúng ta đã tạo
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
                     }
+
+                    const data = await response.json();
+                    cartPopup.innerHTML = ''; // Xóa nội dung cũ
+
+                    if (data.items && data.items.length > 0) {
+                        data.items.forEach(item => {
+                            const itemHtml = `
+                                <div class="cart-item-popup">
+                                    <img src="${item.imageUrl || 'https://placehold.co/50x50/2e2e2e/FFF?text=N/A'}" alt="${item.name}">
+                                    <div class="cart-item-popup-info">
+                                        <div class="name">${item.name}</div>
+                                        <div class="price">${item.quantity} x ${item.priceFormatted}</div>
+                                    </div>
+                                </div>
+                            `;
+                            cartPopup.insertAdjacentHTML('beforeend', itemHtml);
+                        });
+                        cartTotal.innerText = `Tổng cộng: ${data.totalPriceFormatted}`;
+                        cartViewBtn.style.display = 'block';
+                    } else {
+                        cartPopup.innerHTML = '<p class="text-center text-muted">Không có sản phẩm nào.</p>';
+                        cartTotal.innerText = '';
+                        cartViewBtn.style.display = 'none';
+                    }
+
+                    isLoaded = true; // Đánh dấu đã tải
+                } catch (error) {
+                    console.error('Lỗi khi tải giỏ hàng pop-up:', error);
+                    cartPopup.innerHTML = '<p class="text-center text-danger">Không thể tải giỏ hàng.</p>';
+                    cartTotal.innerText = '';
+                    cartViewBtn.style.display = 'none';
+                }
+            }
+
+            if (cartContainer) {
+                 // Dùng mouseenter để tải
+                cartContainer.addEventListener('mouseenter', () => {
+                    clearTimeout(timeoutId); // Xóa bộ đếm thời gian (nếu có)
+                    loadCartPopup();
+                });
+
+                // Dùng mouseleave để reset, cho phép tải lại lần sau
+                cartContainer.addEventListener('mouseleave', () => {
+                    // Đặt bộ đếm thời gian, nếu chuột không quay lại sau 500ms thì reset
+                    timeoutId = setTimeout(() => {
+                        isLoaded = false;
+                    }, 500);
                 });
             }
+
+            // Đóng thông báo TempData tự động
+            setTimeout(() => {
+                let alert = document.querySelector('.alert-container .alert');
+                if(alert) {
+                    new bootstrap.Alert(alert).close();
+                }
+            }, 4000); // Tự đóng sau 4 giây
         });
     </script>
-}
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
 

@@ -1,130 +1,203 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RazorEcom.Data;
 using RazorEcom.Models;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json; // Cần cho việc serialize JSON
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+using System;
 
 namespace RazorEcom.Pages.Products
 {
+    // Chúng ta nên yêu cầu Authorize, vì chỉ người dùng đăng nhập mới có thể thêm vào giỏ
+    [Authorize]
     public class DetailModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DetailModel(ApplicationDbContext context)
+        public DetailModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        // === CÁC THUỘC TÍNH ĐỂ HIỂN THỊ DỮ LIỆU ===
-
-        // 1. Dùng để lưu sản phẩm gốc (tên, mô tả)
-        public RazorEcom.Models.Products Product { get; set; } = null!;
-
-        // 2. Dùng để hiển thị giá/ảnh/sku/material mặc định
+        // === CÁC THUỘC TÍNH ĐỂ HIỂN THỊ ===
+        public Models.Products Product { get; set; } = null!;
         public ProductVariants DefaultVariant { get; set; } = null!;
+        public SelectList VariantOptions { get; set; } = null!;
+        public string VariantsJson { get; set; } = "{}"; // Dùng cho JavaScript
 
-        // 3. Dùng để tạo dropdown (ví dụ: "Size M - Trắng")
-        public List<SelectListItem> VariantOptions { get; set; } = new();
-
-
-        // === CÁC THUỘC TÍNH BINDING VỚI FORM ===
-
-        // 4. Nhận ID từ URL (ví dụ: /Products/Detail/1)
+        // === CÁC THUỘC TÍNH ĐỂ BINDING (NHẬN DỮ LIỆU) ===
         [BindProperty(SupportsGet = true)]
-        public int Id { get; set; } // Phải khớp với asp-for="Id"
+        public int Id { get; set; } // ID của Product (gốc)
 
-        // 5. Nhận ID biến thể được chọn từ dropdown khi POST
         [BindProperty]
-        [Required(ErrorMessage = "Vui lòng chọn một phiên bản")]
-        public int SelectedVariantId { get; set; } // Phải khớp với asp-for="SelectedVariantId"
+        public int SelectedVariantId { get; set; } // ID của biến thể được chọn từ dropdown
 
-        // 6. Nhận số lượng từ input
         [BindProperty]
-        [Range(1, 100, ErrorMessage = "Số lượng phải từ 1 đến 100")]
-        public int Quantity { get; set; } = 1; // Phải khớp với asp-for="Quantity"
+        public int Quantity { get; set; } = 1; // Số lượng từ ô input
 
-
-        public async Task<IActionResult> OnGetAsync(int id)
+        // =================================================================
+        // HÀM TẢI TRANG (GET)
+        // =================================================================
+        public async Task<IActionResult> OnGetAsync()
         {
-            // Tải sản phẩm VÀ tất cả các biến thể của nó
+            // Tải sản phẩm gốc và TẤT CẢ các biến thể của nó
             Product = await _context.Products
-                .Include(p => p.Variants) // Rất quan trọng
+                .Include(p => p.Variants) // Tải các biến thể liên quan
                 .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(p => p.Id == Id);
 
+            // Nếu không tìm thấy sản phẩm, hoặc sản phẩm không có biến thể nào
             if (Product == null || !Product.Variants.Any())
             {
-                // Nếu không có sản phẩm hoặc sản phẩm không có biến thể
-                return NotFound();
+                return NotFound("Không tìm thấy sản phẩm hoặc sản phẩm không có biến thể.");
             }
 
-            // Lấy biến thể đầu tiên làm mặc định
-            DefaultVariant = Product.Variants.First();
-
-            // Tạo danh sách cho dropdown
-            VariantOptions = Product.Variants.Select(v => new SelectListItem
-            {
-                Value = v.Id.ToString(), // Giá trị là ID của biến thể
-                Text = $"{v.Size} - {v.Color} - {v.Material}" // Text hiển thị (ĐÃ CẬP NHẬT)
-            }).ToList();
-
-            // Đặt giá trị mặc định cho dropdown
-            SelectedVariantId = DefaultVariant.Id;
-            Id = Product.Id; // Đặt ID cho form POST
-
-            return Page();
+            // Tải lại dữ liệu (để chuẩn bị dropdown, json, v.v.)
+            return await ReLoadPageData();
         }
 
+        // =================================================================
+        // HÀM XỬ LÝ THÊM VÀO GIỎ (POST)
+        // =================================================================
         public async Task<IActionResult> OnPostAsync()
         {
-            // 1. Kiểm tra xem các giá trị gửi lên (SelectedVariantId, Quantity) có hợp lệ không
             if (!ModelState.IsValid)
             {
-                // Nếu không hợp lệ, tải lại dữ liệu cho trang
-                // (Phải làm lại logic của OnGetAsync)
-                await ReLoadPageData();
-                return Page();
+                TempData["ErrorMessage"] = "Thông tin không hợp lệ.";
+                return await ReLoadPageData(); // Tải lại trang với lỗi
             }
 
-            // 2. Logic thêm vào giỏ hàng
-            // ...
-            // var cartService = ...;
-            // await cartService.AddToCart(SelectedVariantId, Quantity);
-            // ...
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                // Điều này không nên xảy ra do có [Authorize], nhưng vẫn kiểm tra
+                return Challenge();
+            }
 
-            // Tạm thời chỉ thông báo
-            TempData["SuccessMessage"] = $"Đã thêm sản phẩm (ID: {SelectedVariantId}) x {Quantity} vào giỏ!";
+            // 1. Tìm biến thể (variant) mà người dùng đã chọn
+            var selectedVariant = await _context.ProductVariants
+                                        .FirstOrDefaultAsync(v => v.Id == SelectedVariantId && v.ProductId == Id);
 
-            // Tải lại dữ liệu trang sau khi POST
-            await ReLoadPageData();
-            return Page();
-            // Hoặc chuyển hướng đến trang giỏ hàng
-            // return RedirectToPage("/Cart/Index");
+            if (selectedVariant == null)
+            {
+                TempData["ErrorMessage"] = "Phiên bản sản phẩm không hợp lệ.";
+                return await ReLoadPageData();
+            }
+
+            // 2. Kiểm tra tồn kho (Quantity là số lượng người dùng muốn mua)
+            if (selectedVariant.Quantity < Quantity)
+            {
+                TempData["ErrorMessage"] = $"Xin lỗi, chỉ còn {selectedVariant.Quantity} sản phẩm trong kho.";
+                return await ReLoadPageData();
+            }
+
+            // 3. Tìm giỏ hàng của người dùng (hoặc tạo mới)
+            var cart = await _context.Carts
+                            .Include(c => c.Items) // Tải các CartItem hiện có
+                            .FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+            if (cart == null)
+            {
+                // Nếu người dùng chưa có giỏ hàng, tạo mới
+                cart = new Cart { UserId = user.Id };
+                _context.Carts.Add(cart);
+                // Cần SaveChanges 1 lần để cart có Id
+                await _context.SaveChangesAsync();
+            }
+
+            // 4. Kiểm tra xem sản phẩm (biến thể) đã có trong giỏ chưa
+            var cartItem = cart.Items.FirstOrDefault(i => i.VariantId == SelectedVariantId);
+
+            if (cartItem != null)
+            {
+                // Đã có -> Cập nhật số lượng
+                // Kiểm tra lại tồn kho tổng (số lượng hiện có + số lượng thêm mới)
+                if (selectedVariant.Quantity < cartItem.Quantity + Quantity)
+                {
+                    TempData["ErrorMessage"] = $"Số lượng trong giỏ ({cartItem.Quantity}) + số lượng thêm ({Quantity}) vượt quá tồn kho ({selectedVariant.Quantity}).";
+                    return await ReLoadPageData();
+                }
+                cartItem.Quantity += Quantity;
+                cartItem.UpdatedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                // Chưa có -> Thêm mới
+                cartItem = new CartItem
+                {
+                    CartId = cart.Id,
+                    VariantId = SelectedVariantId,
+                    Quantity = Quantity,
+                    UnitPrice = selectedVariant.Price // Lưu giá tại thời điểm mua
+                };
+                cart.Items.Add(cartItem);
+            }
+
+            cart.UpdatedAt = DateTime.UtcNow;
+
+            // 5. Lưu vào CSDL
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Đã thêm sản phẩm vào giỏ hàng!";
+            // Chuyển hướng về chính trang đó (để tránh lỗi F5 gửi lại form)
+            return RedirectToPage(new { id = Id });
         }
 
-        // Hàm tiện ích để tải lại dữ liệu cho OnPostAsync
-        private async Task ReLoadPageData()
+        // =================================================================
+        // HÀM TRỢ GIÚP
+        // =================================================================
+        // Hàm này dùng để tải lại dữ liệu trang (dùng cho cả OnGet và OnPost khi có lỗi)
+        private async Task<IActionResult> ReLoadPageData()
         {
-            Product = await _context.Products
-                .Include(p => p.Variants)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Id == this.Id); // Dùng this.Id (từ hidden input)
-
-            if (Product != null && Product.Variants.Any())
+            // Đảm bảo Product đã được tải
+            if (Product == null)
             {
-                DefaultVariant = Product.Variants.FirstOrDefault(v => v.Id == SelectedVariantId) ?? Product.Variants.First();
-
-                VariantOptions = Product.Variants.Select(v => new SelectListItem
-                {
-                    Value = v.Id.ToString(),
-                    Text = $"{v.Size} - {v.Color} - {v.Material}" // Text hiển thị (ĐÃ CẬP NHẬT)
-                }).ToList();
+                Product = await _context.Products
+                   .Include(p => p.Variants)
+                   .AsNoTracking()
+                   .FirstOrDefaultAsync(p => p.Id == Id);
+                if (Product == null) return NotFound();
             }
+
+            var allVariants = Product.Variants.ToList();
+            var culture = new CultureInfo("vi-VN");
+
+            // Lấy biến thể đầu tiên làm mặc định
+            DefaultVariant = allVariants.FirstOrDefault()!;
+            if (DefaultVariant == null) return NotFound("Sản phẩm không có biến thể.");
+
+            // Tạo SelectList cho dropdown
+            VariantOptions = new SelectList(allVariants.Select(v => new
+            {
+                v.Id,
+                // Hiển thị: "M - Trắng - Cotton"
+                DisplayText = $"{v.Size} - {v.Color}" + (string.IsNullOrEmpty(v.Material) ? "" : $" - {v.Material}")
+            }), "Id", "DisplayText", DefaultVariant.Id);
+
+            // Tạo JSON cho JavaScript (để cập nhật giá/ảnh/sku/material khi đổi dropdown)
+            var variantsData = allVariants.ToDictionary(
+                v => v.Id,
+                v => new
+                {
+                    v.Id,
+                    Price = v.Price.ToString("C0", culture), // Định dạng tiền
+                    v.ImageUrl,
+                    v.Sku,
+                    v.Material
+                });
+            VariantsJson = JsonSerializer.Serialize(variantsData);
+
+            return Page();
         }
     }
 }
-
 
