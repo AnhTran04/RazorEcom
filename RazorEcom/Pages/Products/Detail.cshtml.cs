@@ -108,7 +108,8 @@ namespace RazorEcom.Pages.Products
             if (cart == null)
             {
                 // Nếu người dùng chưa có giỏ hàng, tạo mới
-                cart = new Cart { UserId = user.Id };
+                // SỬA LỖI: Chỉ định rõ RazorEcom.Models.Cart
+                cart = new RazorEcom.Models.Cart { UserId = user.Id };
                 _context.Carts.Add(cart);
                 // Cần SaveChanges 1 lần để cart có Id
                 await _context.SaveChangesAsync();
@@ -132,12 +133,13 @@ namespace RazorEcom.Pages.Products
             else
             {
                 // Chưa có -> Thêm mới
-                cartItem = new CartItem
+                // SỬA LỖI: Chỉ định rõ RazorEcom.Models.CartItem
+                cartItem = new RazorEcom.Models.CartItem
                 {
                     CartId = cart.Id,
                     VariantId = SelectedVariantId,
-                    Quantity = Quantity,
-                    UnitPrice = selectedVariant.Price // Lưu giá tại thời điểm mua
+                    Quantity = Quantity
+                    // UnitPrice đã được xóa vì không có trong model CartItem
                 };
                 cart.Items.Add(cartItem);
             }

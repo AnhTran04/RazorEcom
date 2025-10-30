@@ -15,6 +15,17 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
+    <!--
+         CSP Meta Tag (Giữ lại để đảm bảo an toàn và tải tài nguyên)
+    -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   script-src 'self' 'unsafe-inline' https://code.jquery.com https://cdn.jsdelivr.net;
+                   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net;
+                   font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
+                   img-src 'self' https://source.unsplash.com https://placehold.co data: blob:;
+                   connect-src 'self' https://localhost:7003 http://localhost:* ws://localhost:* wss://localhost:* https://cdn.jsdelivr.net;">
+
     <!-- Custom CSS -->
     <link href="~/css/site.css" rel="stylesheet" />
 
@@ -23,114 +34,27 @@
             font-family: 'Roboto', sans-serif;
             background-color: #1e1e1e; /* dark tone */
             color: #f0f0f0;
-        }
-
-        a {
-            color: #ff7f50;
-        }
-
-            a:hover {
-                color: #ffa07a;
-                text-decoration: none;
-            }
-
-        .navbar {
-            background-color: #2b2b2b;
-        }
-
-        .footer {
-            background-color: #2b2b2b;
-            color: #ccc;
-            padding: 2rem 0;
-        }
-
-        .card {
-            background-color: #2e2e2e;
-            border: none;
-            color: #f0f0f0;
-        }
-
-        .btn-primary {
-            background-color: #ff7f50;
-            border-color: #ff7f50;
-        }
-
-            .btn-primary:hover {
-                background-color: #ffa07a;
-                border-color: #ffa07a;
-            }
-
-        /* == CSS CHO GIỎ HÀNG POP-UP == */
-        .cart-popup-container {
-            position: relative;
-        }
-
-        .cart-popup {
-            position: absolute;
-            top: 100%; /* Hiện ngay dưới icon giỏ hàng */
-            right: 0;
-            width: 350px;
-            background-color: #3a3a3a; /* Nền tối hơn */
-            border: 1px solid #444;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            z-index: 1050;
-            display: none; /* Mặc định ẩn */
-            padding: 1rem;
-            color: #f0f0f0;
-        }
-
-        /* Hiển thị pop-up khi hover vào container */
-        .cart-popup-container:hover .cart-popup {
-            display: block;
-        }
-
-        .cart-popup-item {
+            padding-top: 56px; /* Thêm padding top để nội dung không bị che bởi navbar fixed-top */
             display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #555;
+            flex-direction: column;
+            min-height: 100vh; /* Đảm bảo footer luôn ở cuối */
         }
 
-            .cart-popup-item:last-child {
-                border-bottom: none;
-                margin-bottom: 0;
-            }
+        a { color: #ff7f50; }
+        a:hover { color: #ffa07a; text-decoration: none; }
+        .navbar { background-color: #2b2b2b; }
+        .footer { background-color: #2b2b2b; color: #ccc; padding: 2rem 0; margin-top: auto; /* Đẩy footer xuống cuối */ }
+        .card { background-color: #2e2e2e; border: none; color: #f0f0f0; }
+        .btn-primary { background-color: #ff7f50; border-color: #ff7f50; }
+        .btn-primary:hover { background-color: #ffa07a; border-color: #ffa07a; }
+        main { flex-grow: 1; /* Cho phép main content chiếm không gian còn lại */ }
+        html { height: 100%; } /* Cần thiết cho min-height: 100vh trên body */
 
-            .cart-popup-item img {
-                width: 60px;
-                height: 60px;
-                object-fit: cover;
-                border-radius: 0.25rem;
-            }
-
-        .cart-popup-item-info {
-            flex-grow: 1;
-            font-size: 0.9rem;
-        }
-
-            .cart-popup-item-info .name {
-                font-weight: 600;
-                color: #fff;
-            }
-
-            .cart-popup-item-info .price {
-                color: #ff7f50; /* Màu cam theme */
-            }
-
-        .cart-popup-body {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 1rem;
-        }
-        /* == KẾT THÚC CSS POP-UP == */
     </style>
 </head>
 <body>
     <!-- Header / Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top"> @* Thêm fixed-top *@
         <div class="container">
             <a class="navbar-brand fw-bold" asp-page="/Index">RazorEcom</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -138,20 +62,30 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-page="/Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-page="/Products/Index">Shop</a>
-                    </li>
-
-                    <!-- Partial view cho Đăng nhập/Giỏ hàng/Profile -->
+                    <li class="nav-item"> <a class="nav-link" asp-page="/Index">Home</a> </li>
+                    <li class="nav-item"> <a class="nav-link" asp-page="/Products/Index">Shop</a> </li>
                     <partial name="_LoginPartial" />
-
                 </ul>
             </div>
         </div>
     </nav>
+
+    <!-- Khu vực hiển thị thông báo TempData -->
+    @if (TempData["success"] != null)
+    {
+        <!-- Thêm margin-top để không bị che bởi navbar -->
+        <div class="alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index: 1060; margin-top: 60px !important;" role="alert" id="tempDataAlertSuccess">
+             <i class="bi bi-check-circle-fill me-2"></i> @TempData["success"]
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+         <div class="alert alert-danger alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index: 1060; margin-top: 60px !important;" role="alert" id="tempDataAlertError">
+             <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["error"]
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+    }
 
     <!-- Main content -->
     <main class="container my-5">
@@ -167,97 +101,19 @@
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- Bootstrap 5 JS (Rất quan trọng cho dropdown và navbar) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- == SCRIPT CHO GIỎ HÀNG POP-UP == -->
     <script>
+        // Tự động ẩn thông báo TempData (Giữ lại phần này)
         document.addEventListener('DOMContentLoaded', function () {
-
-            const cartContainer = document.getElementById('cartPopupContainer');
-            if (!cartContainer) return; // Nếu không tìm thấy (do người dùng chưa đăng nhập) thì dừng
-
-            const cartPopup = cartContainer.querySelector('.cart-popup');
-            const cartBody = cartPopup.querySelector('.cart-popup-body');
-            const cartTotal = cartPopup.querySelector('.cart-popup-total');
-            const cartBadge = cartContainer.querySelector('.badge'); // Icon số lượng
-
-            let fetchTimeout;
-
-            // Hàm fetch dữ liệu giỏ hàng
-            async function fetchCartData() {
-                try {
-                    // Gọi đến trang API /Api/Cart
-                    const response = await fetch('/Api/Cart');
-                    if (!response.ok) throw new Error('Network response was not ok');
-
-                    const data = await response.json();
-                    updateCartPopup(data);
-
-                } catch (error) {
-                    console.error('Không thể tải giỏ hàng:', error);
-                    cartBody.innerHTML = '<p class="text-danger small">Không thể tải giỏ hàng.</p>';
-                }
-            }
-
-            // Hàm cập nhật HTML cho pop-up
-            function updateCartPopup(data) {
-                // Cập nhật số lượng trên icon
-                if (cartBadge) {
-                    if (data.totalItems > 0) {
-                        cartBadge.innerText = data.totalItems;
-                        cartBadge.classList.remove('d-none');
-                    } else {
-                        cartBadge.classList.add('d-none');
-                    }
-                }
-
-                // Cập nhật nội dung pop-up
-                if (!data.items || data.items.length === 0) {
-                    cartBody.innerHTML = '<p class="text-center text-muted small">Giỏ hàng của bạn đang trống.</p>';
-                    cartTotal.innerHTML = '';
-                    return;
-                }
-
-                // Xây dựng danh sách sản phẩm
-                cartBody.innerHTML = data.items.map(item => `
-                    <div class="cart-popup-item" data-id="${item.id}">
-                        <img src="${item.imageUrl || 'https://placehold.co/60x60/212529/FFF?text=IMG'}"
-                             alt="${item.productName}"
-                             onerror="this.src='https://placehold.co/60x60/212529/FFF?text=IMG'">
-                        <div class="cart-popup-item-info">
-                            <div class="name">${item.productName}</div>
-                            <div class="text-muted small">${item.variantInfo}</div>
-                            <div class="price">${item.quantity} x ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.unitPrice)}</div>
-                        </div>
-                    </div>
-                `).join('');
-
-                // Cập nhật tổng tiền
-                cartTotal.innerHTML = `
-                    <div class="d-flex justify-content-between fw-bold mb-2">
-                        <span>Tổng (${data.totalItems} sản phẩm):</span>
-                        <span>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalPrice)}</span>
-                    </div>
-                `;
-            }
-
-            // Xử lý sự kiện hover (với độ trễ)
-            cartContainer.addEventListener('mouseenter', () => {
-                clearTimeout(fetchTimeout);
-                fetchCartData();
-            });
-
-            cartContainer.addEventListener('mouseleave', () => {
-                fetchTimeout = setTimeout(() => {
-                    // (Logic đóng pop-up đã được xử lý bằng CSS :hover)
-                }, 200);
-            });
+            const tempDataAlertSuccess = document.getElementById('tempDataAlertSuccess');
+            if (tempDataAlertSuccess) { setTimeout(() => { new bootstrap.Alert(tempDataAlertSuccess).close(); }, 5000); }
+            const tempDataAlertError = document.getElementById('tempDataAlertError');
+            if (tempDataAlertError) { setTimeout(() => { new bootstrap.Alert(tempDataAlertError).close(); }, 5000); }
         });
     </script>
-    <!-- == KẾT THÚC SCRIPT POP-UP == -->
+    <!-- == KẾT THÚC SCRIPT == -->
     @RenderSection("Scripts", required: false)
 </body>
 </html>

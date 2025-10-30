@@ -28,7 +28,7 @@ namespace RazorEcom.Pages.Orders
             _userManager = userManager;
         }
 
-        // Dùng Order (model) để chứa dữ liệu, vì nó đã chứa mọi thứ chúng ta cần
+        // Dùng Order (model) để chứa dữ liệu
         public Order Order { get; set; } = null!;
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -41,15 +41,15 @@ namespace RazorEcom.Pages.Orders
 
             // Truy vấn đơn hàng
             Order = await _context.Orders
-                // 1. Lấy thông tin địa chỉ giao hàng
+                //  Lấy thông tin địa chỉ giao hàng
                 .Include(o => o.ShippingAddress)
-                // 2. Lấy thông tin thanh toán (nếu có)
+                //  Lấy thông tin thanh toán (nếu có)
                 .Include(o => o.Payment)
-                // 3. Lấy danh sách các sản phẩm trong đơn hàng (OrderItem)
+                //  Lấy danh sách các sản phẩm trong đơn hàng (OrderItem)
                 .Include(o => o.OrderItems)
-                    // 4. Với mỗi sản phẩm, lấy thông tin Biến thể (Variant)
+                    //  Với mỗi sản phẩm, lấy thông tin Biến thể (Variant)
                     .ThenInclude(oi => oi.Variant)
-                        // 5. Với mỗi biến thể, lấy thông tin Sản phẩm gốc (Product)
+                        //  Với mỗi biến thể, lấy thông tin Sản phẩm gốc (Product)
                         .ThenInclude(v => v.Product)
                 // Lọc theo ID đơn hàng VÀ ID người dùng (để bảo mật)
                 .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);

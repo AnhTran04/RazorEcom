@@ -1,122 +1,115 @@
 ﻿@page
 @model RazorEcom.Pages.Cart.IndexModel
 @{
-    ViewData["Title"] = "Giỏ hàng của tôi";
-    Layout = "~/Pages/Shared/_Layout.cshtml"; // Đảm bảo dùng layout chính
+    ViewData["Title"] = "Giỏ hàng của bạn";
+    // Sử dụng CultureInfo của Việt Nam để định dạng tiền tệ
+    var culture = new System.Globalization.CultureInfo("vi-VN");
 }
 
-<div class="container py-5 text-light">
-    <h1 class="fw-bold mb-4">@ViewData["Title"]</h1>
+<div class="container py-5">
+    <h1 class="fw-bold text-light mb-4">@ViewData["Title"]</h1>
 
-    <!-- Hiển thị thông báo (nếu có) -->
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
-    @if (Model.Cart.Items.Any())
-    {
-        <div class="row g-5">
-            <!-- Cột trái: Danh sách sản phẩm -->
-            <div class="col-lg-8">
-                <div class="card shadow-sm rounded-4 p-3" style="background-color: #2b2b2b;">
+    <div class="row g-5">
+        <!-- Cột bên trái: Danh sách sản phẩm -->
+        <div class="col-lg-8">
+            @if (Model.CartItems.Any())
+            {
+                <div class="card shadow-sm rounded-4 bg-dark text-light p-3">
                     <div class="card-body">
-
-                        @foreach (var item in Model.Cart.Items)
+                        @foreach (var item in Model.CartItems)
                         {
-                            <div class="row g-3 align-items-center mb-4 pb-4 border-bottom border-secondary">
+                            <div class="row g-3 align-items-center mb-4">
                                 <!-- Ảnh -->
-                                <div class="col-md-2">
-                                    <img src="@(item.ImageUrl ?? "https://placehold.co/100x100/212529/FFF?text=IMG")"
+                                <div class="col-md-2 col-3">
+                                    <img src="@item.ImageUrl"
                                          class="img-fluid rounded-3"
-                                         style="width: 100px; height: 100px; object-fit: cover;"
                                          alt="@item.ProductName"
-                                         onerror="this.src='https://placehold.co/100x100/212529/FFF?text=IMG'">
+                                         style="width: 100px; height: 100px; object-fit: cover;"
+                                         onerror="this.src='https://placehold.co/100x100/212529/FFF?text=Error'" />
                                 </div>
-                                <!-- Thông tin -->
-                                <div class="col-md-4">
-                                    <h5 class="fw-semibold mb-1" style="color: #ff7f50;">@item.ProductName</h5>
-                                    <p class="small text-muted mb-1">@item.VariantInfo</p>
-                                    <p class="small text-muted mb-0">Giá: @item.UnitPrice.ToString("C0")</p>
+
+                                <!-- Tên và Biến thể -->
+                                <div class="col-md-4 col-9">
+                                    <h5 class="fw-semibold mb-1">@item.ProductName</h5>
+                                    <p class="text-muted small mb-1">@item.VariantInfo</p>
+                                    <p class="text-warning fw-semibold mb-0">@item.UnitPrice.ToString("C0", culture)</p>
                                 </div>
-                                <!-- Số lượng (Form) -->
-                                <div class="col-md-3">
+
+                                <!-- Số lượng (Form cập nhật) -->
+                                <div class="col-md-3 col-7">
                                     <form method="post" asp-page-handler="UpdateQuantity" class="d-flex">
-                                        <input type="hidden" name="cartItemId" value="@item.CartItemId" />
-                                        <input type="number" name="newQuantity" value="@item.Quantity"
-                                               min="1" max="99" class="form-control form-control-sm bg-dark text-light" style="width: 70px;" />
-                                        <button type="submit" class="btn btn-outline-light btn-sm ms-2" title="Cập nhật">
-                                            <i class="bi bi-check-lg"></i>
+                                        <input type="hidden" name="cartItemId" value="@item.Id" />
+                                        <input type.number
+                                               name="newQuantity"
+                                               class="form-control form-control-sm bg-dark text-light"
+                                               value="@item.Quantity"
+                                               min="1"
+                                               max="@item.MaxQuantity"
+                                               style="width: 70px;" />
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary ms-2" title="Cập nhật">
+                                            <i class="bi bi-arrow-repeat"></i>
                                         </button>
                                     </form>
                                 </div>
-                                <!-- Giá tổng và Nút xóa (Form) -->
-                                <div class="col-md-3 text-end">
-                                    <h6 class="fw-semibold mb-2">@item.TotalItemPrice.ToString("C0")</h6>
+
+                                <!-- Giá tổng và Nút xóa -->
+                                <div class="col-md-3 col-5 text-end">
+                                    <h6 class="fw-semibold text-warning">@item.TotalItemPrice.ToString("C0", culture)</h6>
+
+                                    <!-- Form xóa sản phẩm -->
                                     <form method="post" asp-page-handler="RemoveItem">
-                                        <input type="hidden" name="cartItemId" value="@item.CartItemId" />
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Xóa sản phẩm">
-                                            <i class="bi bi-trash"></i> Xóa
+                                        <input type="hidden" name="cartItemId" value="@item.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa sản phẩm">
+                                            <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
                                 </div>
                             </div>
+                            @if (!Model.CartItems.Last().Equals(item))
+                            {
+                                <hr class="border-secondary" />
+                            }
                         }
-
-                        <a asp-page="/Products/Index" class="text-decoration-none" style="color: #ff7f50;">
-                            <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
-                        </a>
                     </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="alert alert-secondary text-center bg-dark text-light border-secondary">
+                    Giỏ hàng của bạn đang trống.
+                    <a asp-page="/Products/Index" class="btn btn-primary rounded-pill mt-3">Tiếp tục mua sắm</a>
+                </div>
+            }
+        </div>
 
-            <!-- Cột phải: Tóm tắt đơn hàng -->
+        <!-- Cột bên phải: Tóm tắt đơn hàng -->
+        @if (Model.CartItems.Any())
+        {
             <div class="col-lg-4">
-                <div class="card shadow-sm rounded-4 p-3" style="background-color: #2b2b2b; position: sticky; top: 100px;">
+                <div class="card shadow-sm rounded-4 bg-dark text-light p-3 position-sticky" style="top: 2rem;">
                     <div class="card-body">
-                        <h4 class="fw-bold mb-4">Tóm tắt đơn hàng</h4>
+                        <h4 class="card-title fw-bold mb-4">Tóm tắt đơn hàng</h4>
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Tổng (@Model.Cart.TotalItems sản phẩm)</span>
-                            <span>@Model.Cart.TotalPrice.ToString("C0")</span>
+                            <span class="text-muted">Tạm tính</span>
+                            <span class="fw-semibold">@Model.TotalPrice.ToString("C0", culture)</span>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span class="text-muted">Phí vận chuyển</span>
-                            <span>Miễn phí</span>
+                            <span class="fw-semibold">Miễn phí</span>
                         </div>
                         <hr class="border-secondary" />
                         <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
                             <span>Tổng cộng</span>
-                            <span style="color: #ff7f50;">@Model.Cart.TotalPrice.ToString("C0")</span>
+                            <span class="text-warning">@Model.TotalPrice.ToString("C0", culture)</span>
                         </div>
 
-                        <a asp-page="/Checkout/Index" class="btn btn-primary w-100 btn-lg rounded-pill fw-semibold">
+                        <a asp-page="/Checkout/Index" class="btn btn-primary btn-lg w-100 rounded-pill fw-semibold">
                             Tiến hành thanh toán
                         </a>
                     </div>
                 </div>
             </div>
-        </div>
-    }
-    else
-    {
-        <div class="text-center py-5">
-            <i class="bi bi-cart-x" style="font-size: 5rem; color: #555;"></i>
-            <h3 class="mt-4">Giỏ hàng của bạn đang trống</h3>
-            <p class="text-muted">Hãy quay lại cửa hàng để lựa chọn sản phẩm nhé.</p>
-            <a asp-page="/Products/Index" class="btn btn-primary rounded-pill px-4 py-2 mt-3">
-                <i class="bi bi-shop"></i> Quay lại cửa hàng
-            </a>
-        </div>
-    }
+        }
+    </div>
 </div>
 

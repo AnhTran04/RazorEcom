@@ -1,0 +1,51 @@
+﻿@page
+@model RazorEcom.Areas.Admin.Pages.Products.IndexModel
+@{
+    ViewData["Title"] = "Quản lý Sản phẩm";
+    Layout = "_AdminLayout"; 
+}
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+<p>
+    <a asp-page="./Create" class="btn btn-primary"><i class="bi bi-plus-circle me-2"></i>Tạo mới</a>
+</p>
+
+<table class="table table-dark table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ảnh</th>
+            <th>Tên sản phẩm</th>
+            <th>Danh mục</th>
+            <th>Thương hiệu</th>
+            <th>Trạng thái</th>
+            <th>Ngày tạo</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Product)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>
+                    <img src="@item.ImageUrl" alt="@item.Name" style="width: 50px; height: 50px; object-fit: cover;"
+                         onerror="this.src='https://placehold.co/50x50/2e2e2e/FFF?text=N/A'" />
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Category.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Brand)</td>
+                <td>
+                    <span class="badge @(item.Status == "active" ? "bg-success" : "bg-secondary")">@item.Status</span>
+                </td>
+                <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning me-1" title="Sửa"><i class="bi bi-pencil-square"></i></a>
+                    <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-1" title="Chi tiết"><i class="bi bi-info-circle"></i></a>
+                    <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Xóa"><i class="bi bi-trash"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

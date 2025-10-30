@@ -33,34 +33,28 @@ namespace RazorEcom.Pages.Products
 
         public async Task OnGetAsync()
         {
-            // 1. Tải Categories (không đổi)
             Categories = await _context.Categories
                 .OrderBy(c => c.Name)
                 .AsNoTracking()
                 .ToListAsync();
 
-            // 2. Khởi tạo SortOptions
             var sortList = new List<SelectListItem>
             {
                 new SelectListItem { Value = "newest", Text = "Mới nhất" },
                 new SelectListItem { Value = "priceAsc", Text = "Giá: thấp → cao" },
                 new SelectListItem { Value = "priceDesc", Text = "Giá: cao → thấp" }
             };
-            // Gán giá trị SortBy hiện tại cho SelectList
             SortOptions = new SelectList(sortList, "Value", "Text", SortBy);
 
-            // 3. Xây dựng câu truy vấn ProductVariants
             var query = _context.ProductVariants
                 .Include(v => v.Product)
                 .AsNoTracking();
 
-            // 4. Lọc (Filter) theo CategoryId (nếu có)
             if (CategoryId.HasValue)
             {
                 query = query.Where(v => v.Product.CategoryId == CategoryId.Value);
             }
 
-            // 5. Sắp xếp (Sort)
             switch (SortBy)
             {
                 case "priceAsc":

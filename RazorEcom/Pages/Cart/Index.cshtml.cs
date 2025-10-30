@@ -4,14 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RazorEcom.Data;
-using RazorEcom.Models;
+using RazorEcom.Models; // Đảm bảo bạn đã import namespace Models
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace RazorEcom.Pages.Cart
 {
-    [Authorize] // Yêu cầu người dùng phải đăng nhập
+    [Authorize] // Người dùng phải đăng nhập để xem giỏ hàng
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _context;
@@ -23,130 +24,140 @@ namespace RazorEcom.Pages.Cart
             _userManager = userManager;
         }
 
-        // ViewModel để hiển thị thông tin giỏ hàng
-        public CartViewModel Cart { get; set; } = new CartViewModel();
+        // ViewModel để hiển thị dữ liệu an toàn cho View
+        public List<CartItemViewModel> CartItems { get; set; } = new List<CartItemViewModel>();
+        public decimal TotalPrice { get; set; }
 
-        public class CartViewModel
-        {
-            public List<CartItemViewModel> Items { get; set; } = new List<CartItemViewModel>();
-            public decimal TotalPrice { get; set; }
-            public int TotalItems { get; set; }
-        }
-
+        // Lớp ViewModel lồng bên trong
         public class CartItemViewModel
         {
-            public int CartItemId { get; set; }
+            public int Id { get; set; } // Id của CartItem
             public int VariantId { get; set; }
-            public string ProductName { get; set; }
-            public string VariantInfo { get; set; } // (Size, Color, Material)
-            public string ImageUrl { get; set; }
-            public decimal UnitPrice { get; set; }
+            public string ProductName { get; set; } = string.Empty;
+            public string VariantInfo { get; set; } = string.Empty; // "M - Trắng - Cotton"
+            public string ImageUrl { get; set; } = string.Empty;
+            public decimal UnitPrice { get; set; } // Giá của 1 sản phẩm
             public int Quantity { get; set; }
-            public decimal TotalItemPrice => UnitPrice * Quantity;
+            public int MaxQuantity { get; set; } // Tồn kho
+            public decimal TotalItemPrice => UnitPrice * Quantity; // Giá tổng của dòng này
         }
 
-        // Tải giỏ hàng khi vào trang
+        // =================================================================
+        // HÀM TẢI TRANG (GET)
+        // =================================================================
         public async Task<IActionResult> OnGetAsync()
         {
-            await LoadCartAsync();
-            if (Cart == null)
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                // Mặc dù đã Authorize, vẫn nên kiểm tra
-                return Challenge();
+                return Challenge(); // Yêu cầu đăng nhập
             }
+
+            // Tải giỏ hàng và các mục liên quan
+            var cart = await _context.Carts
+                .Include(c => c.Items)
+                    .ThenInclude(i => i.Variant)
+                        .ThenInclude(v => v.Product) // Cần Product.Name
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+            if (cart == null || !cart.Items.Any())
+            {
+                TotalPrice = 0;
+                return Page(); // Trả về trang trống
+            }
+
+            // Ánh xạ sang ViewModel
+            CartItems = cart.Items.Select(i => new CartItemViewModel
+            {
+                Id = i.Id,
+                VariantId = i.VariantId,
+                ProductName = i.Variant.Product.Name,
+                // Kết hợp Size, Color, Material
+                VariantInfo = string.Join(" - ", new[] { i.Variant.Size, i.Variant.Color, i.Variant.Material }.Where(s => !string.IsNullOrEmpty(s))),
+                ImageUrl = i.Variant.ImageUrl ?? i.Variant.Product.ImageUrl ?? "https://placehold.co/100x100?text=No+Image",
+                UnitPrice = i.Variant.Price, // Lấy giá MỚI NHẤT từ biến thể
+                Quantity = i.Quantity,
+                MaxQuantity = i.Variant.Quantity // Số lượng tồn kho
+            }).ToList();
+
+            TotalPrice = CartItems.Sum(i => i.TotalItemPrice);
+
             return Page();
         }
 
-        // Xử lý Cập nhật số lượng (từ form)
+        // =================================================================
+        // HANDLER ĐỂ CẬP NHẬT SỐ LƯỢNG
+        // =================================================================
         public async Task<IActionResult> OnPostUpdateQuantityAsync(int cartItemId, int newQuantity)
         {
             if (newQuantity <= 0)
             {
-                // Nếu số lượng là 0 hoặc âm, coi như là xóa
+                // Nếu số lượng là 0 hoặc âm, hãy xóa nó
                 return await OnPostRemoveItemAsync(cartItemId);
             }
 
-            var cartItem = await GetCartItemAsync(cartItemId);
+            var cartItem = await FindUserCartItem(cartItemId);
             if (cartItem == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Không tìm thấy sản phẩm trong giỏ.";
+                return RedirectToPage();
             }
 
-            // Kiểm tra tồn kho (nếu cần)
-            // if (newQuantity > cartItem.Variant.Quantity)
-            // {
-            //     TempData["ErrorMessage"] = "Số lượng vượt quá tồn kho.";
-            //     return RedirectToPage();
-            // }
+            // Kiểm tra tồn kho
+            if (newQuantity > cartItem.Variant.Quantity)
+            {
+                TempData["ErrorMessage"] = $"Xin lỗi, chỉ còn {cartItem.Variant.Quantity} sản phẩm trong kho.";
+                return RedirectToPage();
+            }
 
             cartItem.Quantity = newQuantity;
-            _context.CartItems.Update(cartItem);
+            cartItem.UpdatedAt = System.DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Đã cập nhật số lượng sản phẩm!";
+            TempData["SuccessMessage"] = "Đã cập nhật số lượng.";
             return RedirectToPage();
         }
 
-        // Xử lý Xóa sản phẩm
+        // =================================================================
+        // HANDLER ĐỂ XÓA SẢN PHẨM
+        // =================================================================
         public async Task<IActionResult> OnPostRemoveItemAsync(int cartItemId)
         {
-            var cartItem = await GetCartItemAsync(cartItemId);
-            if (cartItem == null)
+            var cartItem = await FindUserCartItem(cartItemId);
+            if (cartItem != null)
             {
-                return NotFound();
+                _context.CartItems.Remove(cartItem);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Đã xóa sản phẩm khỏi giỏ hàng.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy sản phẩm trong giỏ.";
             }
 
-            _context.CartItems.Remove(cartItem);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Đã xóa sản phẩm khỏi giỏ hàng!";
             return RedirectToPage();
         }
 
-
-        // == HÀM HỖ TRỢ ==
-
-        // Hàm tải giỏ hàng (dùng chung cho OnGet và các hàm Post)
-        private async Task LoadCartAsync()
+        // =================================================================
+        // HÀM TRỢ GIÚP
+        // =================================================================
+        // Hàm này tìm và xác thực cartItem thuộc về người dùng đang đăng nhập
+        private async Task<RazorEcom.Models.CartItem?> FindUserCartItem(int cartItemId)
         {
-            var userId = _userManager.GetUserId(User);
-            var userCart = await _context.Carts
-                .Include(c => c.Items)
-                    .ThenInclude(i => i.Variant)
-                        .ThenInclude(v => v.Product)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.UserId == userId);
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return null;
 
-            if (userCart == null || !userCart.Items.Any())
-            {
-                Cart = new CartViewModel(); // Giỏ hàng rỗng
-                return;
-            }
-
-            Cart.Items = userCart.Items.Select(i => new CartItemViewModel
-            {
-                CartItemId = i.Id,
-                VariantId = i.VariantId,
-                ProductName = i.Variant.Product.Name,
-                VariantInfo = $"{i.Variant.Size} - {i.Variant.Color} - {i.Variant.Material}",
-                ImageUrl = i.Variant.ImageUrl ?? i.Variant.Product.ImageUrl, // Lấy ảnh variant, nếu không có thì lấy ảnh gốc
-                UnitPrice = i.Variant.Price, // Lấy giá hiện tại của variant
-                Quantity = i.Quantity
-            }).ToList();
-
-            Cart.TotalPrice = Cart.Items.Sum(i => i.TotalItemPrice);
-            Cart.TotalItems = Cart.Items.Sum(i => i.Quantity);
-        }
-
-        // Hàm lấy CartItem và đảm bảo nó thuộc về đúng người dùng
-        private async Task<CartItem> GetCartItemAsync(int cartItemId)
-        {
-            var userId = _userManager.GetUserId(User);
-
-            // Truy vấn CartItem, bao gồm cả Cart để kiểm tra UserId
             var cartItem = await _context.CartItems
-                .Include(i => i.Cart)
-                .FirstOrDefaultAsync(i => i.Id == cartItemId && i.Cart.UserId == userId);
+                .Include(i => i.Cart)  // Cần Cart để kiểm tra UserId
+                .Include(i => i.Variant) // Cần Variant để kiểm tra tồn kho
+                .FirstOrDefaultAsync(i => i.Id == cartItemId);
+
+            // Đảm bảo cartItem này thuộc về người dùng đang đăng nhập
+            if (cartItem == null || cartItem.Cart.UserId != user.Id)
+            {
+                return null;
+            }
 
             return cartItem;
         }

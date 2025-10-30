@@ -1,0 +1,57 @@
+﻿@page "{id:int}"
+@model RazorEcom.Areas.Admin.Pages.Products.DetailsModel
+
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+}
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+<div class="card p-4" style="max-width: 700px;">
+    <h4>@Model.Product.Name</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.Product.Id</dd>
+
+        <dt class="col-sm-3">Tên sản phẩm</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Product.Name)</dd>
+
+        <dt class="col-sm-3">Thương hiệu</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Product.Brand)</dd>
+
+        <dt class="col-sm-3">Danh mục</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Product.Category.Name)</dd>
+
+        <dt class="col-sm-3">Trạng thái</dt>
+        <dd class="col-sm-9">
+            <span class="badge @(Model.Product.Status == "active" ? "bg-success" : "bg-secondary")">
+                @Model.Product.Status
+            </span>
+        </dd>
+
+        <dt class="col-sm-3">Mô tả</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Product.Description)</dd>
+
+        <dt class="col-sm-3">Ngày tạo</dt>
+        <dd class="col-sm-9">@Model.Product.CreatedAt.ToLocalTime()</dd>
+
+        <dt class="col-sm-3">Ngày cập nhật</dt>
+        <dd class="col-sm-9">@Model.Product.UpdatedAt.ToLocalTime()</dd>
+
+        <dt class="col-sm-3">Ảnh</dt>
+        <dd class="col-sm-9">
+            <img src="@Model.Product.ImageUrl" class="img-fluid rounded" style="max-width: 300px;"
+                 onerror="this.src='https://placehold.co/300x300/2e2e2e/FFF?text=Image+Not+Found'" />
+        </dd>
+
+        <dt class="col-sm-3">URL Ảnh</dt>
+        <dd class="col-sm-9">
+            <code class="text-muted" style="font-size: 0.8rem;">@Model.Product.ImageUrl</code>
+        </dd>
+    </dl>
+</div>
+<div class="mt-4">
+    <a asp-page="./Edit" asp-route-id="@Model.Product?.Id" class="btn btn-primary">Chỉnh sửa</a>
+    <a asp-page="./Index" class="btn btn-secondary ms-2">Quay lại Danh sách</a>
+</div>

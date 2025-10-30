@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Trang Quản Trị</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #212529; /* Nền tối */
+            color: #f8f9fa;
+        }
+
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: 260px;
+            background-color: #343a40; /* Nền sidebar tối hơn */
+            padding: 1rem;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .admin-sidebar .nav-link {
+                color: #adb5bd;
+                font-size: 1rem;
+                padding: 0.75rem 1rem;
+                border-radius: 0.375rem;
+            }
+
+                .admin-sidebar .nav-link:hover {
+                    background-color: #495057;
+                    color: #fff;
+                }
+
+                .admin-sidebar .nav-link.active {
+                    background-color: #ff7f50; /* Màu cam theme của bạn */
+                    color: #fff;
+                    font-weight: 500;
+                }
+
+            .admin-sidebar .sidebar-header {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #fff;
+                padding: 0.5rem 1rem 1rem 1rem;
+                border-bottom: 1px solid #495057;
+                margin-bottom: 1rem;
+            }
+
+            .admin-sidebar .sidebar-footer {
+                margin-top: auto; /* Đẩy xuống dưới cùng */
+            }
+
+        .admin-content {
+            flex-grow: 1;
+            padding: 1.5rem;
+            background-color: #212529;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-topbar {
+            background-color: #343a40;
+            border-radius: 0.375rem;
+            padding: 0.75rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        main {
+            flex-grow: 1;
+        }
+
+        /* Tùy chỉnh table cho theme tối */
+        .table-admin {
+            background-color: #343a40;
+            color: #f8f9fa;
+            border-color: #495057;
+        }
+
+            .table-admin th, .table-admin td, .table-admin thead th {
+                border-color: #495057;
+            }
+
+        .table-admin-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <nav class="admin-sidebar">
+            <div>
+                <div class="sidebar-header">
+                    Admin Panel
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-area="Admin" asp-page="/Index">
+                            <!-- (Tạo trang Index cho Admin nếu cần) -->
+                            <i class="bi bi-grid-fill me-2"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="Admin" asp-page="/Products/Index">
+                            <i class="bi bi-box-seam-fill me-2"></i>
+                            Quản lý Sản phẩm
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <!-- (Tương lai) -->
+                            <i class="bi bi-receipt me-2"></i>
+                            Quản lý Đơn hàng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <!-- (Tương lai) -->
+                            <i class="bi bi-people-fill me-2"></i>
+                            Quản lý Người dùng
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-footer">
+                <hr style="border-color: #495057;">
+                <a class="nav-link" asp-area="" asp-page="/Index">
+                    <i class="bi bi-box-arrow-left me-2"></i>
+                    Quay lại trang chủ
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="admin-content">
+            <!-- Top bar (chủ yếu để Đăng xuất) -->
+            <header class="admin-topbar shadow-sm">
+                <h3 class="mb-0 fs-5 text-light">@ViewData["Title"]</h3>
+
+                <!-- Hiển thị partial Đăng nhập/Đăng xuất -->
+                <ul class="navbar-nav">
+                    <!-- Dùng partial view đăng nhập chung -->
+                    <partial name="_LoginPartial" />
+                </ul>
+            </header>
+
+            <!-- Vị trí RenderBody -->
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

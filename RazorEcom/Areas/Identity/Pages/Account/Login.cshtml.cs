@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using RazorEcom.Models; 
+using Microsoft.Extensions.Logging; 
+using System.Threading.Tasks; 
 
 namespace RazorEcom.Areas.Identity.Pages.Account
 {
@@ -9,11 +12,13 @@ namespace RazorEcom.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel( SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager; 
         }
 
         [BindProperty]
@@ -53,7 +58,19 @@ namespace RazorEcom.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("Người dùng đã đăng nhập thành công.");
-                    return LocalRedirect(returnUrl);
+
+                    // === KIỂM TRA ADMIN ===
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        // Nếu là Admin, luôn chuyển đến trang Dashboard của Admin
+                        _logger.LogInformation("Phát hiện Admin, đang chuyển hướng đến trang Admin.");
+                        // (Đảm bảo đường dẫn /Admin/Products/Index của bạn là chính xác)
+                        return LocalRedirect(Url.Content("~/Admin/Products/Index"));
+                    }
+
+                    _logger.LogInformation("Người dùng thường, đang chuyển hướng đến returnUrl.");
+                    return LocalRedirect(returnUrl); // Chuyển về trang cũ nếu là user thường
                 }
 
                 if (result.IsLockedOut)
@@ -70,3 +87,4 @@ namespace RazorEcom.Areas.Identity.Pages.Account
         }
     }
 }
+
