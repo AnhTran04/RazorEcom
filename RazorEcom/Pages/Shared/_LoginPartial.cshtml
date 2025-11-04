@@ -13,7 +13,7 @@
             <a class="nav-link" asp-page="/Cart/Index" title="Giỏ hàng">
                 <i class="bi bi-cart position-relative fs-5">
                     <!-- Badge số lượng (ID mới để JS tìm thấy) -->
-                    <span id="cartItemCountBadge" @* Đổi ID *@
+                    <span id="cartItemCountBadge"
                           class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle d-none"
                           style="font-size: 0.6rem; padding: 0.2rem 0.4rem;">
                         0
@@ -29,9 +29,11 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="profileDropdown">
                 <li><h6 class="dropdown-header">Chào, @(UserManager.GetUserName(User))</h6></li>
-                <li><a class="dropdown-item" asp-page="/User/Account/Profile"><i class="bi bi-person-fill me-2"></i>Thông tin cá nhân</a></li>
-                <li><a class="dropdown-item" asp-page="/User/OrderDetail"><i class="bi bi-box-seam-fill me-2"></i>Đơn hàng của tôi</a></li>
+                <li><a class="dropdown-item" asp-page="/Account/Profile"><i class="bi bi-person-fill me-2"></i>Thông tin cá nhân</a></li>
+                <li><a class="dropdown-item" asp-page="/Account/AddressBook"><i class="bi bi-geo-alt-fill me-2"></i>Sổ địa chỉ</a></li>
+                <li><a class="dropdown-item" asp-page="/OrderDetail"><i class="bi bi-box-seam-fill me-2"></i>Đơn hàng của tôi</a></li>
                 <li><a class="dropdown-item" asp-page="/Account/PaymentMethods"><i class="bi bi-credit-card-fill me-2"></i>Phương thức thanh toán</a></li>
+                <li><a class="dropdown-item" asp-page="/Identity/Account/Manage/ChangePassword"><i class="bi bi-key-fill me-2"></i>Đổi mật khẩu</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">

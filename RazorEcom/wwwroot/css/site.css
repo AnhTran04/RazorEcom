@@ -52,3 +52,12 @@
         color: #1e1e1e;
         font-weight: bold;
     }
+.nav-pills .nav-link.active {
+    background-color: #0d6efd !important; /* xanh Bootstrap */
+    color: #fff !important;
+}
+
+.nav-pills .nav-link:hover {
+    background-color: rgba(13, 110, 253, 0.15);
+    color: #fff;
+}

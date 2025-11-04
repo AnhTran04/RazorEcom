@@ -1,0 +1,120 @@
+﻿@page
+@model RazorEcom.Pages.Checkout.IndexModel
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="container py-5 text-light">
+    <h1 class="fw-bold mb-4">@ViewData["Title"]</h1>
+
+    <form method="post">
+        <div class="row g-5">
+
+            <!-- Cột bên trái: Thông tin thanh toán và vận chuyển -->
+            <div class="col-lg-7">
+                <div class="card p-4 rounded-4 shadow-sm">
+                    <h4 class="fw-semibold mb-4">Thông tin vận chuyển</h4>
+
+                    <!-- Hiển thị lỗi tổng quan (ví dụ: địa chỉ không hợp lệ) -->
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <!-- Chọn địa chỉ giao hàng -->
+                    <div class="mb-4">
+                        <label asp-for="SelectedAddressId" class="form-label fw-semibold"></label>
+                        <select asp-for="SelectedAddressId" asp-items="Model.ShippingAddresses" class="form-select form-select-lg bg-dark text-light">
+                            <option value="">-- Chọn địa chỉ giao hàng --</option>
+                        </select>
+                        <span asp-validation-for="SelectedAddressId" class="text-danger small"></span>
+                        <div class="mt-2">
+                            <a asp-page="/Account/AddressBook" class="btn btn-sm btn-outline-light rounded-pill">
+                                <i class="bi bi-plus-circle me-1"></i> Quản lý địa chỉ
+                            </a>
+                        </div>
+                    </div>
+
+                    <hr class="border-secondary my-4">
+
+                    <!-- Chọn phương thức thanh toán -->
+                    <div>
+                        <label class="form-label fw-semibold">Phương thức thanh toán</label>
+                        <div class="form-check card bg-dark p-3 rounded-3">
+                            <input asp-for="PaymentMethod" type="radio" value="COD" id="paymentCod" class="form-check-input" checked />
+                            <label class="form-check-label fw-semibold" for="paymentCod">
+                                <i class="bi bi-cash-coin me-2"></i> Thanh toán khi nhận hàng (COD)
+                            </label>
+                            <small class="text-muted">Bạn sẽ thanh toán bằng tiền mặt cho nhân viên giao hàng.</small>
+                        </div>
+                        <!-- Thêm các phương thức thanh toán khác (VNPAY, Momo...) ở đây nếu cần -->
+                        <div class="form-check card bg-dark p-3 rounded-3 mt-2">
+                            <input asp-for="PaymentMethod" type="radio" value="VNPAY" id="paymentVnpay" class="form-check-input" />
+                            <label class="form-check-label fw-semibold" for="paymentVnpay">
+                                <i class="bi bi-credit-card me-2"></i> Thanh toán qua VNPAY (Sắp có)
+                            </label>
+                            <small class="text-muted">Thanh toán an toàn qua cổng VNPAY (chức năng đang phát triển).</small>
+                        </div>
+                        <span asp-validation-for="PaymentMethod" class="text-danger small"></span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Cột bên phải: Tóm tắt đơn hàng -->
+            <div class="col-lg-5">
+                <div class="card p-4 rounded-4 shadow-sm position-sticky" style="top: 100px;">
+                    <h4 class="fw-semibold mb-4">Tóm tắt đơn hàng</h4>
+
+                    <div class="cart-summary-items mb-3" style="max-height: 300px; overflow-y: auto;">
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="@(item.Variant.ImageUrl ?? "https://placehold.co/60x60/2e2e2e/FFF?text=IMG")"
+                                     alt="@item.Variant.Product.Name"
+                                     class="rounded-3"
+                                     style="width: 60px; height: 60px; object-fit: cover;"
+                                     onerror="this.src='https://placehold.co/60x60/2e2e2e/FFF?text=IMG'">
+
+                                <div class="ms-3 flex-grow-1">
+                                    <h6 class="mb-0 fw-semibold" style="font-size: 0.9rem;">@item.Variant.Product.Name</h6>
+                                    <small class="text-muted d-block">@item.Variant.Size - @item.Variant.Color</small>
+                                    <small class="text-muted">SL: @item.Quantity</small>
+                                </div>
+                                <span class="fw-semibold ms-3" style="font-size: 0.9rem;">@((item.Variant.Price * item.Quantity).ToString("C0"))</span>
+                            </div>
+                        }
+                    </div>
+
+                    <hr class="border-secondary">
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tạm tính</span>
+                        <span>@Model.TotalPrice.ToString("C0")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Phí vận chuyển</span>
+                        <span class="text-success">Miễn phí</span>
+                    </div>
+
+                    <hr class="border-secondary">
+
+                    <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
+                        <span class="text-warning">Tổng cộng</span>
+                        <span class="text-warning">@Model.TotalPrice.ToString("C0")</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill py-2">
+                        <i class="bi bi-bag-check-fill me-2"></i> Đặt hàng
+                    </button>
+
+                    <a asp-page="/Cart/Index" class="btn btn-outline-light w-100 rounded-pill py-2 mt-2">
+                        Quay về giỏ hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
