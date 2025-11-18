@@ -23,7 +23,7 @@ namespace RazorEcom.Pages.Account
 
         // Model chứa địa chỉ đang được sửa
         [BindProperty]
-        public AddressBook AddressToEdit { get; set; } = new AddressBook();
+        public AddressBook AddressToEdit { get; set; } = new AddressBook { UserId = string.Empty };
 
         // Id của địa chỉ cần sửa (từ route)
         [BindProperty(SupportsGet = true)]

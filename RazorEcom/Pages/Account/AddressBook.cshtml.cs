@@ -29,7 +29,7 @@ namespace RazorEcom.Pages.Account
 
         // Dùng cho biểu mẫu (form) thêm địa chỉ mới
         [BindProperty]
-        public AddressBook NewAddress { get; set; } = new AddressBook();
+        public AddressBook NewAddress { get; set; }
 
         // Tải danh sách địa chỉ của người dùng
         public async Task<IActionResult> OnGetAsync()

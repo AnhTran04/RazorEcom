@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using RazorEcom.Models; // Đảm bảo using đúng namespace cho ApplicationUser
 
-namespace RazorEcom.Areas.Identity.Pages.Account.Manage
+namespace RazorEcom.Pages.Account
 {
     public class ChangePasswordModel : PageModel
     {

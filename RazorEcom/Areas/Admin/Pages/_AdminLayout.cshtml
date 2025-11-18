@@ -12,7 +12,8 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
+    <!-- Custom CSS for Admin Layout -->
+    <link href="~/css/site.css" rel="stylesheet" />
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -114,7 +115,7 @@
                 </div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active" asp-area="Admin" asp-page="/Index">
+                        <a class="nav-link active" asp-area="Admin" asp-page="/Dashboard/dashboard">
                             <!-- (Tạo trang Index cho Admin nếu cần) -->
                             <i class="bi bi-grid-fill me-2"></i>
                             Dashboard
@@ -127,15 +128,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <!-- (Tương lai) -->
+                        <a class="nav-link" asp-area="Admin" asp-page="/Orders/ManagementOrder">
                             <i class="bi bi-receipt me-2"></i>
                             Quản lý Đơn hàng
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <!-- (Tương lai) -->
+                        <a class="nav-link" asp-area="Admin" asp-page="/Users/ManagementUser">
                             <i class="bi bi-people-fill me-2"></i>
                             Quản lý Người dùng
                         </a>

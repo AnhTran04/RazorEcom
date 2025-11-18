@@ -7,7 +7,7 @@ namespace RazorEcom.Models
         public int Id { get; set; }
 
         [Required]
-        public string UserId { get; set; } // Khóa ngoại tới ApplicationUser
+        public required string UserId { get; set; } // Khóa ngoại tới ApplicationUser
         public ApplicationUser User { get; set; } = null!;
 
         [Required]

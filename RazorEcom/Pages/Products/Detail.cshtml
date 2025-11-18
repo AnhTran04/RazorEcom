@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = Model.Product?.Name ?? "Chi tiết sản phẩm";
 }
-
+<link href="~/css/site.css" rel="stylesheet" />
 <div class="container py-5">
     @if (Model.Product != null && Model.DefaultVariant != null)
     {
@@ -19,7 +19,7 @@
             </div>
 
             <!-- Thông tin sản phẩm -->
-            <div class="col-md-6 text-light">
+            <div class="col-md-6 text">
                 <h2 class="fw-bold">@Model.Product.Name</h2>
 
                 <!-- GIÁ -->
@@ -61,7 +61,7 @@
                     <!-- SỐ LƯỢNG -->
                     <div class="mb-3">
                         <label asp-for="Quantity" class="form-label fw-semibold">Số lượng</label>
-                        <input asp-for="Quantity" type="number" min="1" class="form-control bg-dark text-light" style="max-width: 100px;" />
+                        <input asp-for="Quantity" type="number" min="1" class="form-control text" style="max-width: 100px;" />
                         <span asp-validation-for="Quantity" class="text-danger"></span>
                     </div>
 

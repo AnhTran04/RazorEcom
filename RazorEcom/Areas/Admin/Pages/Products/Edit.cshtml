@@ -4,9 +4,10 @@
 @{
     ViewData["Title"] = "Chỉnh sửa sản phẩm";
 }
+<link href="~/css/site.css" rel="stylesheet" />
 
-<h1 class="mb-4">@ViewData["Title"]</h1>
-<h4 class="mb-3">@Model.Product.Name</h4>
+<h1 class="mb-4 text-light">@ViewData["Title"]</h1>
+<h4 class="mb-3 text-light">@Model.Product.Name</h4>
 
 <hr />
 <div class="row">
@@ -20,34 +21,34 @@
             <input type="hidden" asp-for="Product.CreatedAt" />
 
             <div class="mb-3">
-                <label asp-for="Product.Name" class="form-label"></label>
+                <label asp-for="Product.Name" class="form-label text-light"></label>
                 <input asp-for="Product.Name" class="form-control bg-dark text-light" />
                 <span asp-validation-for="Product.Name" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Product.Description" class="form-label"></label>
+                <label asp-for="Product.Description" class="form-label text-light"></label>
                 <textarea asp-for="Product.Description" class="form-control bg-dark text-light" rows="3"></textarea>
                 <span asp-validation-for="Product.Description" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Product.Brand" class="form-label"></label>
+                <label asp-for="Product.Brand" class="form-label text-light"></label>
                 <input asp-for="Product.Brand" class="form-control bg-dark text-light" />
                 <span asp-validation-for="Product.Brand" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Product.CategoryId" class="form-label">Danh mục</label>
+                <label asp-for="Product.CategoryId" class="form-label text-light">Danh mục</label>
                 <select asp-for="Product.CategoryId" class="form-select bg-dark text-light" asp-items="ViewBag.CategoryId">
                     <option value="">-- Chọn danh mục --</option>
                 </select>
                 <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Product.ImageUrl" class="form-label">URL Ảnh</label>
+                <label asp-for="Product.ImageUrl" class="form-label text-light">URL Ảnh</label>
                 <input asp-for="Product.ImageUrl" class="form-control bg-dark text-light" />
                 <span asp-validation-for="Product.ImageUrl" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Product.Status" class="form-label">Trạng thái</label>
+                <label asp-for="Product.Status" class="form-label text-light">Trạng thái</label>
                 <select asp-for="Product.Status" class="form-select bg-dark text-light">
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>

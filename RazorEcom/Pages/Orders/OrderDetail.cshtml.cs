@@ -3,20 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Mono.TextTemplating;
 using RazorEcom.Data;
 using RazorEcom.Models;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RazorEcom.Pages.Orders
 {
-    [Authorize] // Chỉ người đã đăng nhập mới xem được
+    [Authorize]
     public class DetailModel : PageModel
     {
         private readonly ApplicationDbContext _context;
@@ -28,39 +22,32 @@ namespace RazorEcom.Pages.Orders
             _userManager = userManager;
         }
 
-        // Dùng Order (model) để chứa dữ liệu
-        public Order Order { get; set; } = null!;
+        public Order? Order { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
             var userId = _userManager.GetUserId(User);
             if (userId == null)
             {
-                return Challenge(); // Yêu cầu đăng nhập
+                return Challenge();
             }
 
-            // Truy vấn đơn hàng
+            // Tải đơn hàng VÀ các dữ liệu liên quan
             Order = await _context.Orders
-                //  Lấy thông tin địa chỉ giao hàng
-                .Include(o => o.ShippingAddress)
-                //  Lấy thông tin thanh toán (nếu có)
-                .Include(o => o.Payment)
-                //  Lấy danh sách các sản phẩm trong đơn hàng (OrderItem)
-                .Include(o => o.OrderItems)
-                    //  Với mỗi sản phẩm, lấy thông tin Biến thể (Variant)
-                    .ThenInclude(oi => oi.Variant)
-                        //  Với mỗi biến thể, lấy thông tin Sản phẩm gốc (Product)
-                        .ThenInclude(v => v.Product)
-                // Lọc theo ID đơn hàng VÀ ID người dùng (để bảo mật)
-                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+                .Include(o => o.ShippingAddress) // Tải địa chỉ giao hàng
+                .Include(o => o.Payment)         // Tải thông tin thanh toán
+                .Include(o => o.OrderItems)      // Tải các mục trong đơn hàng
+                    .ThenInclude(oi => oi.Variant)   // ... Tải biến thể của mục đó
+                        .ThenInclude(v => v.Product) // ... Tải sản phẩm của biến thể đó
+                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId); // Chỉ tìm đơn hàng của user này
 
             if (Order == null)
             {
-                return NotFound("Không tìm thấy đơn hàng hoặc bạn không có quyền xem đơn hàng này.");
+                TempData["error"] = "Không tìm thấy đơn hàng hoặc bạn không có quyền xem.";
+                return RedirectToPage("/Index"); // Hoặc trang danh sách đơn hàng
             }
 
             return Page();
         }
     }
 }
-

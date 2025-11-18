@@ -1,63 +1,197 @@
-﻿/* Sidebar giỏ hàng */
-.cart-sidebar {
+﻿/* ===== Base ===== */
+body {
+    background-color: #f9f9fb;
+    color: #2d2d2d;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.2px;
+}
+
+a {
+    color: #0077ff;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #0056cc;
+    text-decoration: underline;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.navbar-dark .nav-link,
+.navbar-light .nav-link {
+    color: #ffffff !important;
+}
+
+.navbar-dark .nav-link:hover,
+.navbar-light .nav-link:hover {
+    color: #0077ff !important;
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+    background-color: #0077ff;
+    border: none;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #005fcb;
+}
+
+.btn-outline-primary {
+    color: #0077ff;
+    border-color: #0077ff;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0077ff;
+    color: #0077ff;
+}
+.btn-outline {
+    color: #0077ff;
+    border-color: #0077ff;
+}
+.btn-outline:hover {
+    background-color: #0077ff;
+    color: #ffffff;
+}
+
+/* ===== Cards ===== */
+.card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(59, 56, 56, 0.05);
+    transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(53, 52, 52, 0.08);
+}
+
+/* ===== Footer ===== */
+.footer {
+    background-color: #0077ff;
+    border-top: 1px solid #e5e7eb;
+    color: #555;
+    padding: 2rem 0;
+}
+
+/* ===== Custom Colors ===== */
+.text-warning {
+    color: #6aa5ff !important;
+}
+
+.text-highlight {
+    color: #0077ff !important;
+}
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* ===== Toast Notification ===== */
+.toast-notification {
     position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: #28a745; /* Màu xanh lá */
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    transform: translateY(20px);
+}
+
+.toast-notification.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.toast-notification.error {
+    background-color: #dc3545; /* Màu đỏ */
+}
+
+/* ===== Sidebar Danh Mục ===== */
+.category-sidebar .list-group-item {
+    background-color: transparent;
+    border: 1px solid #444;
+    color: #0000;
+    transition: all 0.2s ease;
+}
+
+.category-sidebar .list-group-item:hover,
+.category-sidebar .list-group-item.active {
+    background-color: #dddedf ;
+    border-color: #6c757d;
+    font-weight: 600;
+}
+.category-sidebar .list-group-item {
+    color: #000 !important;
+}
+/* ===== Product Card Overlay ===== */
+.product-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image-container {
+    position: relative;
+}
+
+.product-overlay {
+    position: absolute;
     top: 0;
-    right: -350px; /* ẩn ngoài màn hình */
-    width: 350px;
-    height: 100%;
-    background-color: #f8f9fa;
-    color: #000;
-    transition: right 0.3s ease;
-    z-index: 1050; /* cao hơn navbar */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(33, 37, 41, 0.7);
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-    .cart-sidebar.active {
-        right: 0; /* hiện khi active */
+.product-card:hover .product-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+.product-overlay .btn {
+    width: 90%;
+}
+/* ===== Responsive Adjustments ===== */
+@media (max-width: 768px) {
+    .navbar-nav {
+        text-align: center;
     }
 
-.cart-items {
-    flex: 1;
-    overflow-y: auto;
-}
-
-.cart-header, .cart-footer {
-    background-color: #e9ecef;
-}
-.category-card {
-    display: block;
-    padding: 0.75rem 1.25rem;
-    border: 1px solid #444;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    color: #f0f0f0;
-    background-color: #2b2b2b;
-    transition: all 0.2s ease-in-out;
-    text-align: center;
-    font-weight: 500;
-    margin-bottom: 0.5rem; /* Thêm khoảng cách cho mobile */
-}
-
-    .category-card:hover {
-        background-color: #3a3a3a;
-        border-color: #ff7f50; /* Màu cam theme của bạn */
-        color: #f0f0f0;
+    .card {
+        margin-bottom: 1.5rem;
     }
-
-    /* Kiểu cho thẻ đang được chọn */
-    .category-card.active {
-        background-color: #ff7f50;
-        border-color: #ff7f50;
-        color: #1e1e1e;
-        font-weight: bold;
-    }
-.nav-pills .nav-link.active {
-    background-color: #0d6efd !important; /* xanh Bootstrap */
-    color: #fff !important;
 }
-
-.nav-pills .nav-link:hover {
-    background-color: rgba(13, 110, 253, 0.15);
-    color: #fff;
+.placeholder {
+    color: #6c757d !important;
+}
+.col-sm-3.text-light {
+    color: #f8f9fa !important;
+}
+.col-sm-9.text-light {
+    color: #f8f9fa !important;
 }

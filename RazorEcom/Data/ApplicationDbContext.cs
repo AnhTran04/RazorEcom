@@ -33,8 +33,8 @@ namespace RazorEcom.Data
             // Định nghĩa các mối quan hệ phức tạp ở đây (Fluent API)
             #region Fluent API Configurations
             modelBuilder.Entity<Category>()
-                .HasOne(c => c.Parent)
-                .WithMany(c => c.Children)
+                .HasMany(c => c.Children)
+                .WithOne(c => c.Parent)
                 .HasForeignKey(c => c.ParentId)
                 .OnDelete(DeleteBehavior.Restrict);
 

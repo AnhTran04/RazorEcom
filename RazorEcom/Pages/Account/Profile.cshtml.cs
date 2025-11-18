@@ -8,29 +8,23 @@ using System.Threading.Tasks;
 namespace RazorEcom.Pages.Account
 {
     [Authorize] // Yêu cầu người dùng phải đăng nhập để xem trang này
-    public class ProfileModel : PageModel
+    public class ProfileModel(
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager) : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-
-        public ProfileModel(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
 
         // Dùng một InputModel để hiển thị dữ liệu
         public class InputModel
         {
-            public string Email { get; set; }
-            public string FullName { get; set; }
-            public string PhoneNumber { get; set; }
+            public required string Email { get; set; }
+            public required string FullName { get; set; }
+            public required string PhoneNumber { get; set; }
         }
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public required InputModel Input { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {

@@ -1,8 +1,9 @@
 ﻿@page
-@model RazorEcom.Pages.Checkout.IndexModel
+@model RazorEcom.Pages.Checkout.CartModel
 @{
     ViewData["Title"] = "Thanh toán";
 }
+<link href="~/css/site.css" rel="stylesheet" />
 
 <div class="container py-5 text-light">
     <h1 class="fw-bold mb-4">@ViewData["Title"]</h1>
@@ -21,7 +22,7 @@
                     <!-- Chọn địa chỉ giao hàng -->
                     <div class="mb-4">
                         <label asp-for="SelectedAddressId" class="form-label fw-semibold"></label>
-                        <select asp-for="SelectedAddressId" asp-items="Model.ShippingAddresses" class="form-select form-select-lg bg-dark text-light">
+                        <select asp-for="SelectedAddressId" asp-items="Model.ShippingAddresses" class="form-select form-select-lg text">
                             <option value="">-- Chọn địa chỉ giao hàng --</option>
                         </select>
                         <span asp-validation-for="SelectedAddressId" class="text-danger small"></span>
@@ -37,7 +38,7 @@
                     <!-- Chọn phương thức thanh toán -->
                     <div>
                         <label class="form-label fw-semibold">Phương thức thanh toán</label>
-                        <div class="form-check card bg-dark p-3 rounded-3">
+                        <div class="form-check card p-3 rounded-3">
                             <input asp-for="PaymentMethod" type="radio" value="COD" id="paymentCod" class="form-check-input" checked />
                             <label class="form-check-label fw-semibold" for="paymentCod">
                                 <i class="bi bi-cash-coin me-2"></i> Thanh toán khi nhận hàng (COD)
@@ -45,7 +46,7 @@
                             <small class="text-muted">Bạn sẽ thanh toán bằng tiền mặt cho nhân viên giao hàng.</small>
                         </div>
                         <!-- Thêm các phương thức thanh toán khác (VNPAY, Momo...) ở đây nếu cần -->
-                        <div class="form-check card bg-dark p-3 rounded-3 mt-2">
+                        <div class="form-check card p-3 rounded-3 mt-2">
                             <input asp-for="PaymentMethod" type="radio" value="VNPAY" id="paymentVnpay" class="form-check-input" />
                             <label class="form-check-label fw-semibold" for="paymentVnpay">
                                 <i class="bi bi-credit-card me-2"></i> Thanh toán qua VNPAY (Sắp có)

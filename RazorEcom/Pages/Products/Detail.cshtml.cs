@@ -139,7 +139,6 @@ namespace RazorEcom.Pages.Products
                     CartId = cart.Id,
                     VariantId = SelectedVariantId,
                     Quantity = Quantity
-                    // UnitPrice đã được xóa vì không có trong model CartItem
                 };
                 cart.Items.Add(cartItem);
             }
@@ -150,7 +149,6 @@ namespace RazorEcom.Pages.Products
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Đã thêm sản phẩm vào giỏ hàng!";
-            // Chuyển hướng về chính trang đó (để tránh lỗi F5 gửi lại form)
             return RedirectToPage(new { id = Id });
         }
 

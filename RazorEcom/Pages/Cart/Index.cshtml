@@ -5,16 +5,16 @@
     // Sử dụng CultureInfo của Việt Nam để định dạng tiền tệ
     var culture = new System.Globalization.CultureInfo("vi-VN");
 }
-
+<link href="~/css/site.css" rel="stylesheet" />
 <div class="container py-5">
-    <h1 class="fw-bold text-light mb-4">@ViewData["Title"]</h1>
+    <h1 class="fw-bold text mb-4">@ViewData["Title"]</h1>
 
     <div class="row g-5">
         <!-- Cột bên trái: Danh sách sản phẩm -->
         <div class="col-lg-8">
             @if (Model.CartItems.Any())
             {
-                <div class="card shadow-sm rounded-4 bg-dark text-light p-3">
+                <div class="card shadow-sm rounded-4 text p-3">
                     <div class="card-body">
                         @foreach (var item in Model.CartItems)
                         {
@@ -39,9 +39,9 @@
                                 <div class="col-md-3 col-7">
                                     <form method="post" asp-page-handler="UpdateQuantity" class="d-flex">
                                         <input type="hidden" name="cartItemId" value="@item.Id" />
-                                        <input type.number
+                                        <input type="number"
                                                name="newQuantity"
-                                               class="form-control form-control-sm bg-dark text-light"
+                                               class="form-control form-control-sm text"
                                                value="@item.Quantity"
                                                min="1"
                                                max="@item.MaxQuantity"
@@ -75,9 +75,10 @@
             }
             else
             {
-                <div class="alert alert-secondary text-center bg-dark text-light border-secondary">
-                    Giỏ hàng của bạn đang trống.
-                    <a asp-page="/Products/Index" class="btn btn-primary rounded-pill mt-3">Tiếp tục mua sắm</a>
+                <!-- THAY ĐỔI Ở ĐÂY -->
+                <div class="alert alert-secondary text border-secondary d-flex justify-content-between align-items-center">
+                    <span>Giỏ hàng của bạn đang trống.</span>
+                    <a asp-page="/Products/Index" class="btn btn-primary rounded-pill">Tiếp tục mua sắm</a>
                 </div>
             }
         </div>
@@ -86,7 +87,7 @@
         @if (Model.CartItems.Any())
         {
             <div class="col-lg-4">
-                <div class="card shadow-sm rounded-4 bg-dark text-light p-3 position-sticky" style="top: 2rem;">
+                <div class="card shadow-sm rounded-4 text p-3 position-sticky" style="top: 2rem;">
                     <div class="card-body">
                         <h4 class="card-title fw-bold mb-4">Tóm tắt đơn hàng</h4>
                         <div class="d-flex justify-content-between mb-2">
@@ -112,4 +113,4 @@
         }
     </div>
 </div>
-
+<script src="cart.js"></script>

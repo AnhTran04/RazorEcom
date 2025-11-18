@@ -9,16 +9,11 @@ using RazorEcom.Models;
 namespace RazorEcom.Areas.Admin.Pages.Products
 {
     [Authorize(Roles = "Admin")]
-    public class DetailsModel : PageModel
+    public class DetailsModel(RazorEcom.Data.ApplicationDbContext context) : PageModel
     {
-        private readonly RazorEcom.Data.ApplicationDbContext _context;
+        private readonly RazorEcom.Data.ApplicationDbContext _context = context;
 
-        public DetailsModel(RazorEcom.Data.ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public Models.Products Product { get; set; } = default!;
+        public required ProductVariants ProductVariants { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -27,17 +22,17 @@ namespace RazorEcom.Areas.Admin.Pages.Products
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
+            var ProductVariants = await _context.ProductVariants
+                .Include(p => p.Product)
+                    .ThenInclude(v => v.Category)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-            if (product == null)
+             if (ProductVariants == null || ProductVariants.Product == null || ProductVariants.Product.Category == null)
             {
+                // Nếu một trong các liên kết bắt buộc bị thiếu, trả về Not Found
                 return NotFound();
             }
-
-            Product = product;
             return Page();
         }
     }

@@ -4,7 +4,9 @@
     ViewData["Title"] = "Sổ Địa chỉ";
     Layout = "~/Pages/Account/Shared/_AccountLayout.cshtml";
 }
-<div class="card bg-dark border-secondary rounded-4 p-3">
+<link href="~/css/site.css" rel="stylesheet" />
+
+<div class="card border-secondary rounded-4 p-3">
     <div class="row g-5">
         <!-- Cột trái: Thêm địa chỉ mới -->
             <div class="tab-pane fade show active col-lg-5">
@@ -14,38 +16,38 @@
 
                     <div class="mb-3">
                         <label asp-for="NewAddress.FullName" class="form-label fw-semibold"></label>
-                        <input asp-for="NewAddress.FullName" class="form-control bg-dark text-light" placeholder="Nguyễn Văn A" />
+                        <input asp-for="NewAddress.FullName" class="form-control text" placeholder="Nguyễn Văn A" />
                         <span asp-validation-for="NewAddress.FullName" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="NewAddress.Phone" class="form-label fw-semibold"></label>
-                        <input asp-for="NewAddress.Phone" class="form-control bg-dark text-light" placeholder="09xxxxxxxx" />
+                        <input asp-for="NewAddress.Phone" class="form-control text" placeholder="09xxxxxxxx" />
                         <span asp-validation-for="NewAddress.Phone" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="NewAddress.AddressLine" class="form-label fw-semibold">Địa chỉ cụ thể</label>
-                        <input asp-for="NewAddress.AddressLine" class="form-control bg-dark text-light" placeholder="Số nhà, tên đường/thôn/xóm..." />
+                        <input asp-for="NewAddress.AddressLine" class="form-control text" placeholder="Số nhà, tên đường/thôn/xóm..." />
                         <span asp-validation-for="NewAddress.AddressLine" class="text-danger small"></span>
                     </div>
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label asp-for="NewAddress.City" class="form-label fw-semibold">Tỉnh/Thành phố</label>
-                            <input asp-for="NewAddress.City" class="form-control bg-dark text-light" placeholder="Hồ Chí Minh" />
+                            <input asp-for="NewAddress.City" class="form-control text" placeholder="Hồ Chí Minh" />
                             <span asp-validation-for="NewAddress.City" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
                             <label asp-for="NewAddress.District" class="form-label fw-semibold">Quận/Huyện</label>
-                            <input asp-for="NewAddress.District" class="form-control bg-dark text-light" placeholder="Quận 1" />
+                            <input asp-for="NewAddress.District" class="form-control text" placeholder="Quận 1" />
                             <span asp-validation-for="NewAddress.District" class="text-danger small"></span>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="NewAddress.Ward" class="form-label fw-semibold">Phường/Xã</label>
-                        <input asp-for="NewAddress.Ward" class="form-control bg-dark text-light" placeholder="Phường Bến Nghé" />
+                        <input asp-for="NewAddress.Ward" class="form-control text" placeholder="Phường Bến Nghé" />
                         <span asp-validation-for="NewAddress.Ward" class="text-danger small"></span>
                     </div>
 
@@ -73,7 +75,7 @@
             {
                 @foreach (var addr in Model.Addresses)
                 {
-                    <div class="card mb-3 shadow-sm rounded-3 bg-dark">
+                    <div class="card mb-3 shadow-sm rounded-3 border-secondary">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>

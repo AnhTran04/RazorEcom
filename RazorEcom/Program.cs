@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RazorEcom.Data;
 using RazorEcom.Models;
+using RazorEcom.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,18 +14,35 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-
+builder.Services.AddScoped<CategoryService>();
 // Đăng ký ASP.NET Core Identity
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
+    options.Password.RequireDigit = true;           // Yêu cầu phải có số
+    options.Password.RequireLowercase = true;       // Yêu cầu phải có chữ thường
+    options.Password.RequireUppercase = true;       // Yêu cầu phải có chữ hoa
+    options.Password.RequiredLength = 8;            // Độ dài tối thiểu (bạn nên đổi từ 6 thành 8)
+    options.Password.RequiredUniqueChars = 1;         // Số ký tự khác nhau tối thiểu trong mật khẩu
+    options.SignIn.RequireConfirmedAccount = false; // Không yêu cầu xác nhận email khi đăng ký
+    options.Password.RequireNonAlphanumeric = false; // Không yêu cầu ký tự đặc biệt
 })
-.AddRoles<IdentityRole>() 
+.AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
+// Cấu hình Session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages()
+   .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
 
 var app = builder.Build();
 
@@ -62,6 +80,7 @@ else
     app.UseHsts();
 }
 
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
