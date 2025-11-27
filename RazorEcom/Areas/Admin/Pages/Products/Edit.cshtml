@@ -1,0 +1,89 @@
+﻿@page "{id:int}"
+@model RazorEcom.Areas.Admin.Pages.Products.EditModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
+}
+<link href="~/css/site.css" rel="stylesheet" />
+
+<h1 class="mb-4 text-light">@ViewData["Title"]</h1>
+<h4 class="mb-3 text-light">@Model.Product.Name</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Phải có Input hidden cho Id -->
+            <input type="hidden" asp-for="Product.Id" />
+            <!-- Input hidden để giữ lại CreatedAt -->
+            <input type="hidden" asp-for="Product.CreatedAt" />
+            <!-- Input hidden để giữ lại ImageUrl cũ nếu không upload mới -->
+            <input type="hidden" asp-for="Product.ImageUrl" />
+
+            <div class="mb-3">
+                <label asp-for="Product.Name" class="form-label text-light"></label>
+                <input asp-for="Product.Name" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Product.Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.Description" class="form-label text-light"></label>
+                <textarea asp-for="Product.Description" class="form-control bg-dark text-light" rows="3"></textarea>
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.Brand" class="form-label text-light"></label>
+                <input asp-for="Product.Brand" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Product.Brand" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.CategoryId" class="form-label text-light">Danh mục</label>
+                <select asp-for="Product.CategoryId" class="form-select bg-dark text-light" asp-items="ViewBag.CategoryId">
+                    <option value="">-- Chọn danh mục --</option>
+                </select>
+                <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ImageFile" class="form-label text-light">Ảnh sản phẩm</label>
+                <input asp-for="ImageFile" class="form-control bg-dark text-light" type="file" accept="image/*" onchange="previewImage(this)" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+                
+                <div class="mt-2">
+                    <img id="imagePreview" src="@(Model.Product.ImageUrl ?? "https://placehold.co/200x200?text=No+Image")" 
+                         alt="Preview" class="img-thumbnail bg-dark border-secondary" style="max-height: 200px;" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.Status" class="form-label text-light">Trạng thái</label>
+                <select asp-for="Product.Status" class="form-select bg-dark text-light">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                <span asp-validation-for="Product.Status" class="text-danger"></span>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save me-2"></i>Lưu thay đổi</button>
+                <a asp-page="Index" class="btn btn-secondary ms-2">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

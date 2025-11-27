@@ -1,125 +1,220 @@
-﻿@* _Layout.cshtml *@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - RazorEcom</title>
+<head>  
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
+    <!-- CSP -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+               script-src 'self' 'unsafe-inline' https://code.jquery.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com;
+               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com;
+               font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:;
+                img-src 'self' https://source.unsplash.com https://images.unsplash.com https://placehold.co data: blob:;
+               connect-src 'self' https://localhost:7003 http://localhost:* ws://localhost:* wss://localhost:* https://cdn.jsdelivr.net;">
+    @await RenderSectionAsync("Styles", required: false) 
     <!-- Custom CSS -->
     <link href="~/css/site.css" rel="stylesheet" />
 
+
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #1e1e1e; /* dark tone */
-            color: #f0f0f0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9fb;
+            color: #2d2d2d;
+            padding-top: 64px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        html {
+            height: 100%;
         }
 
         a {
-            color: #ff7f50;
+            color: #0077ff;
+            text-decoration: none;
+            transition: 0.2s ease-in-out;
         }
 
-            a:hover {
-                color: #ffa07a;
-                text-decoration: none;
-            }
+        a:hover {
+            color: #0056cc;
+            text-decoration: underline;
+        }
 
+        /* Navbar */
         .navbar {
-            background-color: #2b2b2b;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
 
-        .footer {
-            background-color: #2b2b2b;
-            color: #ccc;
-            padding: 2rem 0;
+        .navbar-brand {
+            font-weight: 700;
+            color: #0077ff !important;
         }
 
-        .card {
-            background-color: #2e2e2e;
-            border: none;
-            color: #f0f0f0;
-        }
-
-        .btn-primary {
-            background-color: #ff7f50;
-            border-color: #ff7f50;
-        }
-
-            .btn-primary:hover {
-                background-color: #ffa07a;
-                border-color: #ffa07a;
-            }
-
-        /* Đảm bảo các icon trên navbar có màu phù hợp */
         .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.75); /* Màu chữ nav-link sáng hơn */
+            color: #333 !important;
+            font-weight: 500;
+            padding: 0.6rem 1rem;
         }
 
-            .navbar-nav .nav-link:hover {
-                color: #ff7f50; /* Màu cam khi hover */
-            }
+        .navbar-nav .nav-link:hover {
+            color: #0077ff !important;
+        }
+
+        /* Cards */
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #0077ff;
+            border: none;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+
+        .btn-primary:hover {
+            background-color: #005fcb;
+        }
+
+        .btn-outline-primary {
+            border-color: #0077ff;
+            color: #0077ff;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #0077ff;
+            color: #fff;
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            color: #555;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        .footer a {
+            color: #0077ff;
+        }
+
+        .footer a:hover {
+            color: #005fcb;
+        }
+
+        main {
+            flex-grow: 1;
+        }
+
+        /* Custom Highlight Colors */
+        .text-highlight {
+            color: #0077ff !important;
+        }
+
+        .text-warning {
+            color: #ffb300 !important;
+        }
     </style>
 </head>
+
 <body>
-    <!-- Header / Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" asp-page="/Index">RazorEcom</a>
+            <a class="navbar-brand" asp-page="/Index"><i class="bi bi-bag-check-fill me-1"></i>RazorEcom</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <form class="d-flex" asp-page="/Search/Index" method="get">
+                <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm..." aria-label="Search" name="q">
+                <button class="btn btn-outline-success" type="submit">Tìm</button>
+            </form>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <!-- Đổi thành me-auto để đẩy các mục sau sang phải -->
-                    <li class="nav-item">
-                        <a class="nav-link" asp-page="/Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-page="/Products/Index">Shop</a>
-                    </li>
-                </ul>
-
-                <!--
-                    PHẦN ĐÃ SỬA:
-                    Thay thế các link Login/Register cố định bằng
-                    Partial View để hiển thị động.
-                -->
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" asp-page="/Index">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-page="/Products/Index">Sản phẩm</a></li>
                     <partial name="_LoginPartial" />
                 </ul>
-
             </div>
         </div>
     </nav>
 
-    <!-- Main content -->
+    <!-- TempData Alerts -->
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-3"
+            style="z-index: 1060; margin-top: 70px;" role="alert" id="tempDataAlertSuccess">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show position-fixed top-0 end-0 m-3"
+            style="z-index: 1060; margin-top: 70px;" role="alert" id="tempDataAlertError">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Main -->
     <main class="container my-5">
         @RenderBody()
     </main>
 
     <!-- Footer -->
-    <footer class="footer mt-auto">
+    <footer class="footer">
         <div class="container text-center">
-            <p>&copy; @DateTime.Now.Year RazorEcom. All rights reserved.</p>
+            <p class="mb-1">&copy; @DateTime.Now.Year RazorEcom. All rights reserved.</p>
+            <small>Designed with ❤️ using ASP.NET Core Razor Pages</small>
         </div>
     </footer>
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/site.js"></script>
+    <script src="~/js/product.js"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const success = document.getElementById('tempDataAlertSuccess');
+            const error = document.getElementById('tempDataAlertError');
+            if (success) setTimeout(() => new bootstrap.Alert(success).close(), 4000);
+            if (error) setTimeout(() => new bootstrap.Alert(error).close(), 5000);
+        });
+    </script>
+
     @RenderSection("Scripts", required: false)
 </body>
-</html>
 
+</html>

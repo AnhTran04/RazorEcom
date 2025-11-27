@@ -1,0 +1,185 @@
+/* Google Fonts - Inter cho nét hiện đại */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* --- Dimensions --- */
+    --admin-sidebar-width: 260px;
+    --admin-header-height: 70px;
+
+    /* --- Colors --- */
+    --primary-color: #4e73df;
+    --primary-hover: #2e59d9;
+    --secondary-bg: #f8f9fc; /* Nền sáng cho nội dung chính */
+    
+    /* --- Sidebar Theme (Dark) --- */
+    --sidebar-bg: #212529; 
+    --sidebar-text: rgba(255, 255, 255, 0.8);
+    --sidebar-text-hover: #fff;
+    --sidebar-border-color: rgba(255, 255, 255, 0.1);
+
+    /* --- Card & Border --- */
+    --card-bg: #ffffff;
+    --border-color: #e3e6f0;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--secondary-bg);
+    color: #5a5c69;
+    overflow-x: hidden;
+}
+
+/* ==================== LAYOUT STRUCTURE ==================== */
+
+#wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+#sidebar-wrapper {
+    min-height: 100vh;
+    margin-left: 0;
+    width: var(--admin-sidebar-width);
+    background-color: var(--sidebar-bg);
+    transition: margin .25s ease-out;
+    position: fixed;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--sidebar-border-color);
+}
+
+.sidebar-heading {
+    padding: 0 1.5rem;
+    height: var(--admin-header-height);
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--sidebar-border-color);
+}
+
+/* Sidebar Navigation Items */
+.list-group-item {
+    border: none;
+    padding: 1rem 1.5rem;
+    background-color: transparent;
+    color: var(--sidebar-text);
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.list-group-item i {
+    margin-right: 12px;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--sidebar-text-hover);
+    border-left: 4px solid var(--primary-color);
+    padding-left: calc(1.5rem - 4px); /* Giữ text không bị nhảy */
+}
+
+.list-group-item.active {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-left: 4px solid #fff;
+    padding-left: calc(1.5rem - 4px);
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    margin-top: auto;
+    padding: 1rem;
+    border-top: 1px solid var(--sidebar-border-color);
+}
+
+/* --- Page Content --- */
+#page-content-wrapper {
+    width: 100%;
+    margin-left: var(--admin-sidebar-width); /* Đẩy nội dung sang phải bằng chiều rộng sidebar */
+    transition: margin .25s ease-out;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- Topbar --- */
+.admin-navbar {
+    height: var(--admin-header-height);
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58, 59, 69, .15);
+    background-color: #fff;
+    padding: 0 1.5rem;
+    z-index: 900;
+}
+
+/* ==================== COMPONENTS ==================== */
+
+/* Cards */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Tables */
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    background-color: #f8f9fc;
+    color: #858796;
+}
+
+/* ==================== TOGGLE LOGIC & RESPONSIVE ==================== */
+
+/* Trạng thái Toggled (Ẩn sidebar) trên Desktop */
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: calc(var(--admin-sidebar-width) * -1);
+}
+
+#wrapper.toggled #page-content-wrapper {
+    margin-left: 0;
+}
+
+/* Mobile Responsiveness (< 768px) */
+@media (max-width: 768px) {
+    /* Mặc định trên Mobile: Sidebar ẩn */
+    #sidebar-wrapper {
+        margin-left: calc(var(--admin-sidebar-width) * -1);
+    }
+    
+    #page-content-wrapper {
+        margin-left: 0;
+    }
+
+    /* Khi bấm Toggle trên Mobile: Sidebar hiện ra */
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: 0;
+    }
+    
+    /* Có thể thêm lớp phủ (overlay) nếu muốn, hiện tại giữ đơn giản */
+    #wrapper.toggled #page-content-wrapper {
+        margin-left: 0; /* Nội dung bị sidebar đè lên hoặc giữ nguyên */
+    }
+}

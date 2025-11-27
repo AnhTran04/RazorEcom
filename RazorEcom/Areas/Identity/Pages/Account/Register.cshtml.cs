@@ -6,24 +6,17 @@ using RazorEcom.Models; // thêm dòng này để nhận ra ApplicationUser
 
 namespace RazorEcom.Areas.Identity.Pages.Account
 {
-    public class RegisterModel : PageModel
+    public class RegisterModel(
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        ILogger<RegisterModel> logger) : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly ILogger<RegisterModel> _logger;
-
-        public RegisterModel(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            ILogger<RegisterModel> logger)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _logger = logger;
-        }
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+        private readonly ILogger<RegisterModel> _logger = logger;
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public required InputModel Input { get; set; }
 
         public string? ReturnUrl { get; set; }
 
@@ -31,12 +24,12 @@ namespace RazorEcom.Areas.Identity.Pages.Account
         {
             [Required(ErrorMessage = "Vui lòng nhập họ tên")]
             [Display(Name = "Họ và tên")]
-            public string FullName { get; set; }
+            public required string FullName { get; set; }
 
             [Required(ErrorMessage = "Vui lòng nhập email")]
             [EmailAddress]
             [Display(Name = "Email")]
-            public string Email { get; set; }
+            public required string Email { get; set; }
 
             [Phone]
             [Display(Name = "Số điện thoại")]
@@ -46,12 +39,12 @@ namespace RazorEcom.Areas.Identity.Pages.Account
             [StringLength(100, ErrorMessage = "{0} phải có ít nhất {2} ký tự.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Mật khẩu")]
-            public string Password { get; set; }
+            public required string Password { get; set; }
 
             [DataType(DataType.Password)]
             [Display(Name = "Xác nhận mật khẩu")]
             [Compare("Password", ErrorMessage = "Mật khẩu xác nhận không khớp.")]
-            public string ConfirmPassword { get; set; }
+            public required string ConfirmPassword { get; set; }
         }
 
         public void OnGet(string? returnUrl = null)
@@ -79,6 +72,7 @@ namespace RazorEcom.Areas.Identity.Pages.Account
                     _logger.LogInformation("Người dùng mới đã được tạo.");
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
+                    // TempData["success"] = "Đăng ký tài khoản thành công!";
                     return LocalRedirect(returnUrl);
                 }
 

@@ -1,0 +1,54 @@
+@page
+@model RazorEcom.Areas.Admin.Pages.Users.ManagementUserModel
+@{
+    ViewData["Title"] = "Quản lý Người dùng";
+    Layout = "_AdminLayout"; 
+}
+<link href="~/css/site.css" rel="stylesheet" />
+
+    <h1 class="fw-bold text-light mb-4">@ViewData["Title"]</h1>
+    <!-- Bảng danh sách người dùng -->
+    <div class="card bg-dark border-secondary rounded-4 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-borderless align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="padding-left: 1.5rem;">Email</th>
+                            <th scope="col">Tên tài khoản</th>
+                            <th scope="col">Vai trò (Roles)</th>
+                            <th scope="col" style="padding-right: 1.5rem;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.UsersList)
+                        {
+                            <tr>
+                                <td style="padding-left: 1.5rem;">
+                                    @user.Email
+                                </td>
+                                <td>
+                                    @user.UserName
+                                </td>
+                                <td>
+                                    @foreach (var role in user.Roles)
+                                    {
+                                        <!-- Hiển thị vai trò, đổi màu cho Admin để dễ thấy -->
+                                        var badgeClass = role.ToLower() == "admin" ? "bg-danger" : "bg-primary";
+                                        <span class="badge @badgeClass">@role</span>
+                                    }
+                                </td>
+                                <td >
+                                    <a asp-page="/Users/EditUser" asp-route-id="@user.UserId" 
+                                       class="btn btn-sm btn-outline-info enabled" 
+                                       title="Chỉnh sửa">
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

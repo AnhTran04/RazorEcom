@@ -1,0 +1,78 @@
+﻿@page
+@model RazorEcom.Pages.Orders.OrderModel
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+    Layout = "~/Pages/Account/Shared/_AccountLayout.cshtml";
+}
+<link href="~/css/site.css" rel="stylesheet" />
+
+<div class="tab-content">
+
+    @if (Model.Orders == null || !Model.Orders.Any())
+    {
+        <div class="alert alert-secondary text-center">
+            Bạn chưa có đơn hàng nào.
+            <a asp-page="/Index" class="alert-link">Bắt đầu mua sắm ngay!</a>
+        </div>
+    }
+    else
+    {
+        <div class="card border-secondary rounded-4 p-4">
+            <h2 class="fw-bold text mb-4">@ViewData["Title"]</h2>
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="padding-left: 1.5rem;">Mã ĐH</th>
+                            <th scope="col">Ngày tạo</th>
+                            <th scope="col">Tổng tiền</th>
+                            <th scope="col">Trạng thái ĐH</th>
+                            <th scope="col">Trạng thái TT</th>
+                            <th scope="col" style="padding-right: 1.5rem;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td style="padding-left: 1.5rem;">
+                                    <span class="fw-bold">#@order.Id</span>
+                                </td>
+                                <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <span class="fw-semibold text-warning">@order.Total.ToString("N0")đ</span>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge @(order.Status.ToLower() == "pending" ? "bg-warning text-dark" : (order.Status.ToLower() == "completed" ? "bg-success" : (order.Status.ToLower() == "shipped" ? "bg-info text-dark" : "bg-danger")))">
+                                        @order.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (order.Payment != null)
+                                    {
+                                        <span
+                                            class="badge @(order.Payment.Status.ToLower() == "pending" ? "bg-warning text-dark" : "bg-success")">
+                                            @order.Payment.Status
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">N/A</span>
+                                    }
+                                </td>
+                                <td class="text-end" style="padding-right: 1.5rem;">
+                                    <!-- ĐÂY LÀ LINK ĐỂ TRỎ VÀO TRANG CHI TIẾT -->
+                                    <a asp-page="/Orders/OrderDetail" asp-route-id="@order.Id"
+                                        class="btn btn-sm btn-outline-info">
+                                        Xem chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

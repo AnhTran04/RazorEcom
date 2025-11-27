@@ -1,0 +1,70 @@
+@page "{id}"
+@model RazorEcom.Areas.Admin.Pages.Users.EditUserModel
+@{
+    ViewData["Title"] = "Chỉnh sửa Vai trò";
+    Layout = "_AdminLayout";
+}
+<link href="~/css/site.css" rel="stylesheet" />
+
+<div class="container py-5">
+    <h1 class="fw-bold text-light mb-4">@ViewData["Title"]</h1>
+
+    <!-- Bảng danh sách người dùng -->
+    <div class="card bg-dark border-secondary rounded-4 shadow-sm">
+        <div class="card-body p-4">
+
+            <form method="post">
+                <!-- Gửi kèm ID để OnPostAsync biết đang sửa user nào -->
+                <input type="hidden" asp-for="Id" />
+                @Html.AntiForgeryToken()
+
+                <!-- Hiển thị thông tin user (không cho sửa) -->
+                <div class="mb-3">
+                    <label class="form-label text-light">Email</label>
+                    <input asp-for="Email" class="form-control bg-dark text-light" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Tên tài khoản</label>
+                    <input asp-for="UserName" class="form-control bg-dark text-light" readonly />
+                </div>
+
+                <hr class="border-secondary"/>
+
+                <!-- Checkbox cho các vai trò -->
+                <div class="mb-3 text-light">
+                    <label class="form-label fw-semibold">Vai trò (Roles)</label>
+                    <div class="form-check">
+                        @foreach (var role in Model.AllRoles)
+                        {
+                            <!-- 
+                                Khi submit, chỉ các checkbox được chọn mới gửi giá trị 
+                                (tên của vai trò) vào danh sách "SelectedRoles" ở backend
+                            -->
+                            <div classs="mb-2">
+                                <input type="checkbox" 
+                                       name="SelectedRoles" 
+                                       value="@role.Name" 
+                                       class="form-check-input"
+                                       id="role-@role.Id"
+                                       @(string.IsNullOrEmpty(role.Name) ? "" : (Model.SelectedRoles.Contains(role.Name ?? "") ? "checked" : "")) />
+                                <label class="form-check-label" for="role-@role.Id">
+                                    @role.Name
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        Lưu thay đổi
+                    </button>
+                    <a asp-page="./Index" class="btn btn-outline-secondary rounded-pill ms-2">
+                        Hủy
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

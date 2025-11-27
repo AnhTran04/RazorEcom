@@ -1,0 +1,77 @@
+﻿@page "{id:int}"
+@model RazorEcom.Areas.Admin.Pages.Products.DetailsModel
+
+@{
+    ViewData["Title"] = "Chi tiết Biến thể sản phẩm";
+}
+<link href="~/css/site.css" rel="stylesheet" />
+
+<h1 class="mb-4 text-light">@ViewData["Title"]</h1>
+
+<div class="card p-4 bg-dark text-light" style="max-width: 700px;">
+    <!-- THAY ĐỔI: Hiển thị tên sản phẩm + SKU -->
+    <h4>@Model.ProductVariants.Product?.Name</h4>
+    <p class="text-muted">SKU: @Model.ProductVariants.Sku</p>
+    <hr />
+    
+    <!-- THAY ĐỔI: Chuyển sang Model.ProductVariant -->
+    <dl class="row ">
+        <dt class="col-sm-3">Variant ID</dt>
+        <dd class="col-sm-9">@Model.ProductVariants.Id</dd>
+        
+        <dt class="col-sm-3">Product ID</dt>
+        <dd class="col-sm-9">@Model.ProductVariants.ProductId</dd>
+
+        <dt class="col-sm-3">Tên sản phẩm</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ProductVariants.Product.Name)</dd>
+
+        <dt class="col-sm-3">Thương hiệu</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ProductVariants.Product.Brand)</dd>
+
+        <dt class="col-sm-3">Danh mục</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ProductVariants.Product.Category.Name)</dd>
+        
+        <dt class="col-sm-3">Trạng thái (của Product)</dt>
+        <dd class="col-sm-9">
+            <span class="badge @(Model.ProductVariants.Product?.Status == "active" ? "bg-success" : "bg-secondary")">
+                @Model.ProductVariants.Product?.Status
+            </span>
+        </dd>
+
+        <!-- THÊM MỚI: Các trường của Variant -->
+        <dt class="col-sm-3">Size</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ProductVariants.Size)</dd>
+
+        <dt class="col-sm-3">Màu</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ProductVariants.Color)</dd>
+
+        <dt class="col-sm-3">Giá</dt>
+        <dd class="col-sm-9">@Model.ProductVariants.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</dd>
+
+        <dt class="col-sm-3">Số lượng tồn kho</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ProductVariants.Quantity)</dd>
+
+        <dt class="col-sm-3">Ngày tạo (Variant)</dt>
+        <dd class="col-sm-9">@Model.ProductVariants.CreatedAt.ToLocalTime()</dd>
+
+        <dt class="col-sm-3">Ngày cập nhật (Variant)</dt>
+        <dd class="col-sm-9">@Model.ProductVariants.UpdatedAt.ToLocalTime()</dd>
+
+        <dt class="col-sm-3">Ảnh</dt>
+        <dd class="col-sm-9">
+            <!-- Ưu tiên ảnh của Variant, nếu không có thì lấy ảnh của Product -->
+            <img src="@(Model.ProductVariants.ImageUrl ?? Model.ProductVariants.Product?.ImageUrl)" class="img-fluid rounded" style="max-width: 300px;"
+                 onerror="this.src='https://placehold.co/300x300/2e2e2e/FFF?text=Image+Not+Found'" />
+        </dd>
+
+        <dt class="col-sm-3">URL Ảnh (Variant)</dt>
+        <dd class="col-sm-9">
+            <code class="text-muted" style="font-size: 0.8rem;">@Model.ProductVariants.ImageUrl</code>
+        </dd>
+    </dl>
+</div>
+<div class="mt-4">
+    <!-- THAY ĐỔI: Nút Chỉnh sửa trỏ đến 'EditVariant' và dùng Variant ID -->
+    <a asp-page="./EditVariant" asp-route-id="@Model.ProductVariants?.Id" class="btn btn-primary">Chỉnh sửa Biến thể</a>
+    <a asp-page="./Index" class="btn btn-secondary ms-2">Quay lại Danh sách</a>
+</div>

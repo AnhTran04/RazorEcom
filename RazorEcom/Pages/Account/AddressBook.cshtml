@@ -1,0 +1,121 @@
+﻿@page
+@model RazorEcom.Pages.Account.AddressBookModel
+@{
+    ViewData["Title"] = "Sổ Địa chỉ";
+    Layout = "~/Pages/Account/Shared/_AccountLayout.cshtml";
+}
+<link href="~/css/site.css" rel="stylesheet" />
+
+<div class="card border-secondary rounded-4 p-3">
+    <div class="row g-5">
+        <!-- Cột trái: Thêm địa chỉ mới -->
+            <div class="tab-pane fade show active col-lg-5">
+                <h2 class="mb-4 fw-bold">Thêm địa chỉ mới</h2>
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="NewAddress.FullName" class="form-label fw-semibold"></label>
+                        <input asp-for="NewAddress.FullName" class="form-control text" placeholder="Nguyễn Văn A" />
+                        <span asp-validation-for="NewAddress.FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="NewAddress.Phone" class="form-label fw-semibold"></label>
+                        <input asp-for="NewAddress.Phone" class="form-control text" placeholder="09xxxxxxxx" />
+                        <span asp-validation-for="NewAddress.Phone" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="NewAddress.AddressLine" class="form-label fw-semibold">Địa chỉ cụ thể</label>
+                        <input asp-for="NewAddress.AddressLine" class="form-control text" placeholder="Số nhà, tên đường/thôn/xóm..." />
+                        <span asp-validation-for="NewAddress.AddressLine" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="NewAddress.City" class="form-label fw-semibold">Tỉnh/Thành phố</label>
+                            <input asp-for="NewAddress.City" class="form-control text" placeholder="Hồ Chí Minh" />
+                            <span asp-validation-for="NewAddress.City" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="NewAddress.District" class="form-label fw-semibold">Quận/Huyện</label>
+                            <input asp-for="NewAddress.District" class="form-control text" placeholder="Quận 1" />
+                            <span asp-validation-for="NewAddress.District" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="NewAddress.Ward" class="form-label fw-semibold">Phường/Xã</label>
+                        <input asp-for="NewAddress.Ward" class="form-control text" placeholder="Phường Bến Nghé" />
+                        <span asp-validation-for="NewAddress.Ward" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input asp-for="NewAddress.IsDefault" class="form-check-input" type="checkbox" />
+                        <label asp-for="NewAddress.IsDefault" class="form-check-label fw-semibold">Đặt làm địa chỉ mặc định</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 w-100">
+                        <i class="bi bi-plus-circle me-2"></i>Thêm địa chỉ
+                    </button>
+                </form>
+            </div>
+
+        <!-- Cột phải: Danh sách địa chỉ đã lưu -->
+        <div class="col-lg-7">
+            <h2 class="mb-4 fw-bold">Địa chỉ đã lưu</h2>
+            @if (Model.Addresses == null || !Model.Addresses.Any())
+            {
+                <div class="alert alert-secondary text-center">
+                    Bạn chưa có địa chỉ nào được lưu.
+                </div>
+            }
+            else
+            {
+                @foreach (var addr in Model.Addresses)
+                {
+                    <div class="card mb-3 shadow-sm rounded-3 border-secondary">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h5 class="card-title mb-1">@addr.FullName</h5>
+                                    <p class="card-text text-muted small mb-0">@addr.Phone</p>
+                                </div>
+                                @if (addr.IsDefault)
+                                {
+                                    <span class="badge bg-success rounded-pill">Mặc định</span>
+                                }
+                            </div>
+                            <p class="card-text">
+                                @addr.AddressLine, @addr.Ward, @addr.District, @addr.City
+                            </p>
+                            <div class="mt-3 d-flex justify-content-end gap-2">
+                                @if (!addr.IsDefault)
+                                {
+                                    <form method="post" asp-page-handler="SetDefault" asp-route-id="@addr.Id" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-info" title="Đặt làm mặc định">
+                                            <i class="bi bi-check2-circle"></i> Đặt mặc định
+                                        </button>
+                                    </form>
+                                }
+                                <a asp-page="/Account/AddressBookEdit" asp-route-id="@addr.Id" class="btn btn-sm btn-outline-warning" title="Sửa">
+                                    <i class="bi bi-pencil-square"></i> Sửa
+                                </a>
+                                <form method="post" asp-page-handler="Delete" asp-route-id="@addr.Id" onsubmit="return confirm('Bạn có chắc muốn xóa địa chỉ này?');" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

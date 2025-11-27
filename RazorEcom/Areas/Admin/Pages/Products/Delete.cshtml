@@ -1,0 +1,40 @@
+﻿@page "{id:int}"
+@model RazorEcom.Areas.Admin.Pages.Products.DeleteModel
+
+@{
+    ViewData["Title"] = "Xác nhận xóa";
+}
+<link href="~/css/site.css" rel="stylesheet" />
+
+<h1 class="mb-4 text-light">@ViewData["Title"]</h1>
+
+<h3 class="text-danger mb-3">Bạn có chắc chắn muốn xóa sản phẩm này?</h3>
+<div class="card p-4 bg-dark text-light" style="max-width: 600px;">
+    <h4>@Model.Product.Name</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Thương hiệu</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Product.Brand)</dd>
+
+        <dt class="col-sm-3">Danh mục</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Product.Category.Name)</dd>
+
+        <dt class="col-sm-3">Trạng thái</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Product.Status)</dd>
+
+        <dt class="col-sm-3">Mô tả</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Product.Description)</dd>
+
+        <dt class="col-sm-3">Ảnh</dt>
+        <dd class="col-sm-9">
+            <img src="@Model.Product.ImageUrl" style="width: 100px;"
+                 onerror="this.src='https://placehold.co/100x100/2e2e2e/FFF?text=N/A'" />
+        </dd>
+    </dl>
+
+    <form method="post" class="mt-3">
+        <input type="hidden" asp-for="Product.Id" />
+        <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-2"></i>Xác nhận Xóa</button>
+        <a asp-page="./Index" class="btn btn-secondary ms-2">Hủy</a>
+    </form>
+</div>

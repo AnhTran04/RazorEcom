@@ -1,0 +1,57 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(23,6): error RZ1034: Found a malformed 'form' tag helper. Tag helpers must have a start and end tag or be self closing. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Shared\_Layout.cshtml(15,3): error RZ1034: Found a malformed 'head' tag helper. Tag helpers must have a start and end tag or be self closing. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Helper\SessionExtensions.cs(14,16): warning CS8603: Possible null reference return. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Account\AddressBook.cshtml.cs(21,16): warning CS8618: Non-nullable property 'NewAddress' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Account\AddressBook.cshtml.cs(76,33): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Account\AddressBook.cshtml.cs(77,71): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Index.cshtml(49,30): warning CS8604: Possible null reference argument for parameter 'source' in 'decimal Enumerable.Min<ProductVariants>(IEnumerable<ProductVariants> source, Func<ProductVariants, decimal> selector)'. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Search\Index.cshtml.cs(15,16): warning CS8618: Non-nullable property 'q' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Search\Index.cshtml.cs(60,25): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Search\Index.cshtml.cs(61,25): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Search\Index.cshtml.cs(63,25): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Search\Index.cshtml.cs(64,25): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Areas\Admin\Pages\Products\Index.cshtml(184,53): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(127,46): warning CS8604: Possible null reference argument for parameter 'source' in 'decimal Enumerable.Min<ProductVariants>(IEnumerable<ProductVariants> source, Func<ProductVariants, decimal> selector)'. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(322,46): warning CS8604: Possible null reference argument for parameter 'source' in 'decimal Enumerable.Min<ProductVariants>(IEnumerable<ProductVariants> source, Func<ProductVariants, decimal> selector)'. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Account\Profile.cshtml.cs(41,28): warning CS8601: Possible null reference assignment. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml.cs(25,16): warning CS8618: Non-nullable property 'SortBy' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml.cs(25,16): warning CS8618: Non-nullable property 'Brand' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml.cs(25,16): warning CS8618: Non-nullable property 'Color' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml.cs(25,16): warning CS8618: Non-nullable property 'Size' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml.cs(130,21): error CS0139: No enclosing loop out of which to break or continue [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Detail.cshtml.cs(53,23): warning CS8601: Possible null reference assignment. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Detail.cshtml.cs(164,27): warning CS8601: Possible null reference assignment. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+
+Build FAILED.
+
+D:\LTWNC\webecombanquanao\RazorEcom\Helper\SessionExtensions.cs(14,16): warning CS8603: Possible null reference return. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Account\AddressBook.cshtml.cs(21,16): warning CS8618: Non-nullable property 'NewAddress' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Account\AddressBook.cshtml.cs(76,33): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Account\AddressBook.cshtml.cs(77,71): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Index.cshtml(49,30): warning CS8604: Possible null reference argument for parameter 'source' in 'decimal Enumerable.Min<ProductVariants>(IEnumerable<ProductVariants> source, Func<ProductVariants, decimal> selector)'. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Search\Index.cshtml.cs(15,16): warning CS8618: Non-nullable property 'q' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Search\Index.cshtml.cs(60,25): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Search\Index.cshtml.cs(61,25): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Search\Index.cshtml.cs(63,25): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Search\Index.cshtml.cs(64,25): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Areas\Admin\Pages\Products\Index.cshtml(184,53): warning CS8602: Dereference of a possibly null reference. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(127,46): warning CS8604: Possible null reference argument for parameter 'source' in 'decimal Enumerable.Min<ProductVariants>(IEnumerable<ProductVariants> source, Func<ProductVariants, decimal> selector)'. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(322,46): warning CS8604: Possible null reference argument for parameter 'source' in 'decimal Enumerable.Min<ProductVariants>(IEnumerable<ProductVariants> source, Func<ProductVariants, decimal> selector)'. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Account\Profile.cshtml.cs(41,28): warning CS8601: Possible null reference assignment. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml.cs(25,16): warning CS8618: Non-nullable property 'SortBy' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml.cs(25,16): warning CS8618: Non-nullable property 'Brand' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml.cs(25,16): warning CS8618: Non-nullable property 'Color' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml.cs(25,16): warning CS8618: Non-nullable property 'Size' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Detail.cshtml.cs(53,23): warning CS8601: Possible null reference assignment. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Detail.cshtml.cs(164,27): warning CS8601: Possible null reference assignment. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(23,6): error RZ1034: Found a malformed 'form' tag helper. Tag helpers must have a start and end tag or be self closing. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Shared\_Layout.cshtml(15,3): error RZ1034: Found a malformed 'head' tag helper. Tag helpers must have a start and end tag or be self closing. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml.cs(130,21): error CS0139: No enclosing loop out of which to break or continue [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+    20 Warning(s)
+    3 Error(s)
+
+Time Elapsed 00:00:03.22
+
+Workload updates are available. Run `dotnet workload list` for more information.

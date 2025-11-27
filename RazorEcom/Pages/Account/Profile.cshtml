@@ -1,0 +1,39 @@
+﻿@page
+@model RazorEcom.Pages.Account.ProfileModel
+@{
+    ViewData["Title"] = "Tài khoản của tôi";
+    Layout = "~/Pages/Account/Shared/_AccountLayout.cshtml";
+}
+<link href="~/css/site.css" rel="stylesheet" />
+
+            <div class="tab-content">
+                <!-- Tab Nội dung Thông tin cá nhân -->
+                <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="card text border-secondary rounded-4 p-4">
+                        <h2 class="fw-bold text mb-4">Thông tin cá nhân</h2>
+
+                        @if (Model.Input != null)
+                        {
+                            <dl class="row">
+                                <dt class="col-sm-3">Họ và tên:</dt>
+                                <dd class="col-sm-9">@Model.Input.FullName</dd>
+
+                                <dt class="col-sm-3">Email:</dt>
+                                <dd class="col-sm-9">@Model.Input.Email</dd>
+
+                                <dt class="col-sm-3">Số điện thoại:</dt>
+                                <dd class="col-sm-9">@Model.Input.PhoneNumber</dd>
+                            </dl>
+                        }
+                        else
+                        {
+                            <p class="text-danger">Không thể tải thông tin người dùng.</p>
+                        }
+
+                        <hr class="border-secondary">
+                        <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-primary rounded-pill mt-3" style="max-width: 200px;">
+                            Cập nhật thông tin
+                        </a>
+                    </div>
+                </div>
+            </div>

@@ -1,0 +1,98 @@
+@page "{id:int}"
+@model RazorEcom.Areas.Admin.Pages.Products.EditVariantModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Variant sản phẩm";
+}
+<link href="~/css/site.css" rel="stylesheet" />
+
+<h1 class="mb-4 text-light">@ViewData["Title"]</h1>
+<h4 class="mb-3 text-light">@Model.Variant.Product.Name</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Hidden inputs để giữ Id và CreatedAt -->
+            <input type="hidden" asp-for="Variant.Id" />
+            <input type="hidden" asp-for="Variant.ProductId" />
+            <input type="hidden" asp-for="Variant.CreatedAt" />
+            <div class="mb-3">
+                <label asp-for="Product.Name" class="form-label text-light"></label>
+                <input asp-for="Product.Name" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Product.Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.Description" class="form-label text-light"></label>
+                <textarea asp-for="Product.Description" class="form-control bg-dark text-light" rows="3"></textarea>
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.Brand" class="form-label text-light"></label>
+                <input asp-for="Product.Brand" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Product.Brand" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.CategoryId" class="form-label text-light">Danh mục</label>
+                <select asp-for="Product.CategoryId" class="form-select bg-dark text-light" asp-items="ViewBag.CategoryId">
+                    <option value="">-- Chọn danh mục --</option>
+                </select>
+                <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.ImageUrl" class="form-label text-light">URL Ảnh</label>
+                <input asp-for="Product.ImageUrl" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Product.ImageUrl" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.Status" class="form-label text-light">Trạng thái</label>
+                <select asp-for="Product.Status" class="form-select bg-dark text-light">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                <span asp-validation-for="Product.Status" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Variant.Sku" class="form-label text-light">SKU</label>
+                <input asp-for="Variant.Sku" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Variant.Sku" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Variant.ImageUrl" class="form-label text-light">Image URL</label>
+                <input asp-for="Variant.ImageUrl" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Variant.ImageUrl" class="text-danger"></span>
+            <div class="mb-3">
+                <label asp-for="Variant.Size" class="form-label text-light">Size</label>
+                <input asp-for="Variant.Size" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Variant.Size" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Variant.Color" class="form-label text-light">Color</label>
+                <input asp-for="Variant.Color" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Variant.Color" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Variant.Material" class="form-label text-light">Material</label>
+                <input asp-for="Variant.Material" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Variant.Material" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Variant.Price" class="form-label text-light">Price</label>
+                <input asp-for="Variant.Price" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Variant.Price" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Variant.Quantity" class="form-label text-light">Quantity</label>
+                <input asp-for="Variant.Quantity" class="form-control bg-dark text-light" />
+                <span asp-validation-for="Variant.Quantity" class="text-danger"></span>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save me-2"></i>Lưu thay đổi</button>
+                <a asp-page="Index" class="btn btn-secondary ms-2">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>

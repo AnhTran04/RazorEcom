@@ -1,0 +1,282 @@
+@page
+@model RazorEcom.Areas.Admin.Pages.DashboardModel
+@{
+    ViewData["Title"] = "Bảng điều khiển";
+    Layout = "_AdminLayout";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+<link href="~/css/site.css" rel="stylesheet" />
+<h1 class="text-dark">@ViewData["Title"]</h1> <!-- Đổi text-light thành text-dark -->
+
+
+<!-- 1. HÀNG THẺ THỐNG KÊ (KARD) -->
+<div class="row">
+    <!-- Kard Doanh thu -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-white text-dark border-success h-100"> <!-- Thêm bg-white, đổi text-light thành text-dark -->
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col me-2">
+                        <div class="text-xs fw-bold text-success text-uppercase mb-1">
+                            Tổng doanh thu
+                        </div>
+                        <div class="h5 mb-0 fw-bold">@Model.TotalRevenue.ToString("C0", culture)</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-cash-stack fs-2 text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kard Đơn hàng -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-white text-dark border-primary h-100"> <!-- bg-white, text-dark -->
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col me-2">
+                        <div class="text-xs fw-bold text-primary text-uppercase mb-1">
+                            Tổng đơn hàng
+                        </div>
+                        <div class="h5 mb-0 fw-bold">@Model.TotalOrders</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-box-seam fs-2 text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kard Người dùng -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-white text-dark border-info h-100"> <!-- bg-white, text-dark -->
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col me-2">
+                        <div class="text-xs fw-bold text-info text-uppercase mb-1">
+                            Người dùng
+                        </div>
+                        <div class="h5 mb-0 fw-bold">@Model.TotalUsers</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-people fs-2 text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kard Sản phẩm (SKU) -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-white text-dark border-warning h-100"> <!-- bg-white, text-dark -->
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col me-2">
+                        <div class="text-xs fw-bold text-warning text-uppercase mb-1">
+                            Sản phẩm (SKU)
+                        </div>
+                        <div class="h5 mb-0 fw-bold">@Model.TotalProductSKUs</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-grid fs-2 text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!-- 1.5. HÀNG BÁO CÁO NHANH -->
+<!-- ============================================= -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-white text-dark border-secondary">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-file-earmark-text me-2"></i>Báo cáo nhanh</span>
+                <a asp-page="/Reports/Index" class="btn btn-sm btn-outline-dark">Xem tất cả</a>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <!-- Sales Report -->
+                    <div class="col-md-4">
+                        <form method="post" asp-area="Admin" asp-page="/Reports/Index" asp-page-handler="ExportPdf" target="_blank">
+                            <input type="hidden" name="ReportType" value="sales" />
+                            <button type="submit" class="btn btn-outline-success w-100 h-100 p-3 text-start shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-graph-up-arrow fs-3 me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">Báo cáo Doanh thu</div>
+                                        <div class="small text-muted">Xuất PDF 30 ngày qua</div>
+                                    </div>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Inventory Report -->
+                    <div class="col-md-4">
+                        <form method="post" asp-area="Admin" asp-page="/Reports/Index" asp-page-handler="ExportPdf" target="_blank">
+                            <input type="hidden" name="ReportType" value="inventory" />
+                            <button type="submit" class="btn btn-outline-warning w-100 h-100 p-3 text-start shadow-sm text-dark">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-box-seam fs-3 me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">Báo cáo Tồn kho</div>
+                                        <div class="small text-muted">Xuất PDF hiện tại</div>
+                                    </div>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Customer Report -->
+                    <div class="col-md-4">
+                        <form method="post" asp-area="Admin" asp-page="/Reports/Index" asp-page-handler="ExportPdf" target="_blank">
+                            <input type="hidden" name="ReportType" value="customer" />
+                            <button type="submit" class="btn btn-outline-info w-100 h-100 p-3 text-start shadow-sm text-dark">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-people fs-3 me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">Báo cáo Khách hàng</div>
+                                        <div class="small text-muted">Xuất PDF 30 ngày qua</div>
+                                    </div>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!-- 2. HÀNG BIỂU ĐỒ MỚI -->
+<!-- ============================================= -->
+<div class="row">
+    <!-- Cột Biểu đồ Doanh thu (Line Chart) -->
+    <div class="col-lg-7 mb-4">
+        <div class="card bg-white text-dark h-100 shadow-sm border"> <!-- bg-white, text-dark -->
+            <div class="card-header bg-white">
+                <i class="bi bi-graph-up me-2"></i>
+                Doanh thu 7 ngày qua
+            </div>
+            <div class="card-body">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cột Biểu đồ Trạng thái (Doughnut Chart) -->
+    <div class="col-lg-5 mb-4">
+        <div class="card bg-white text-dark h-100 shadow-sm border"> <!-- bg-white, text-dark -->
+            <div class="card-header bg-white">
+                <i class="bi bi-pie-chart-fill me-2"></i>
+                Trạng thái Đơn hàng
+            </div>
+            <div class="card-body" style="max-height: 300px; display: flex; align-items: center; justify-content: center;">
+                <canvas id="orderStatusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================= -->
+<!-- 3. HÀNG NỘI DUNG (BẢNG) -->
+<!-- ============================================= -->
+<div class="row">
+    <!-- Cột Đơn hàng gần đây -->
+    <div class="col-lg-7 mb-4">
+        <div class="card bg-white text-dark h-100 shadow-sm border"> <!-- bg-white, text-dark -->
+            <div class="card-header bg-white">
+                <i class="bi bi-clock-history me-2"></i>
+                Đơn hàng gần đây
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0"> <!-- Bỏ table-dark -->
+                        <thead>
+                            <tr>
+                                <th>Mã ĐH</th>
+                                <th>Khách hàng</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày</th>
+                                <th>Tổng tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.RecentOrders)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-page="/Orders/Details" asp-route-id="@order.Id">#@order.Id</a>
+                                    </td>
+                                    <td>@(order.User?.Email ?? "N/A")</td>
+                                    <td>
+                                        <span class="badge bg-warning text-dark">@order.Status</span>
+                                    </td>
+                                    <td>@order.CreatedAt.ToString("dd/MM/yy HH:mm")</td>
+                                    <td class="text-end">@order.Total.ToString("C0", culture)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột Sản phẩm sắp hết hàng -->
+    <div class="col-lg-5 mb-4">
+        <div class="card bg-white text-dark h-100 shadow-sm border"> <!-- bg-white, text-dark -->
+            <div class="card-header bg-white">
+                <i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>
+                Sản phẩm sắp hết hàng (<= 10)
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0"> <!-- Bỏ table-dark -->
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Biến thể</th>
+                                <th>Tồn kho</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var variant in Model.LowStockProducts)
+                            {
+                                <tr>
+                                    <td>@(variant.Product?.Name)</td>
+                                    <td>@variant.Size - @variant.Color</td>
+                                    <td>
+                                        <span class="badge bg-danger">@variant.Quantity</span>
+                                    </td>
+                                    <td>
+                                        <a asp-page="./Products/EditVariant" asp-route-id="@variant.Id" class="btn btn-sm btn-outline-warning">Sửa</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!-- 4. THÊM SCRIPTS CHO BIỂU ĐỒ -->
+<!-- ============================================= -->
+@section Scripts {
+    <!-- Tải thư viện Chart.js từ CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    
+    <!-- Tải file JS mới để vẽ biểu đồ -->
+    <script src="~/js/admin-dashboard.js"></script>
+}

@@ -1,0 +1,77 @@
+﻿@page "{id:int}"
+@model RazorEcom.Pages.Account.AddressBookEditModel
+@{
+    ViewData["Title"] = "Sửa địa chỉ";
+    Layout = "~/Pages/Account/Shared/_Layout.cshtml";
+}
+<link href="~/css/site.css" rel="stylesheet" />
+
+<div class="container py-5 text">
+    <h1 class="mb-4 fw-bold">@ViewData["Title"]</h1>
+
+    <div class="row">
+        <div class="col-md-8 col-lg-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="AddressToEdit.Id" />
+
+                <div class="mb-3">
+                    <label asp-for="AddressToEdit.FullName" class="form-label fw-semibold"></label>
+                    <input asp-for="AddressToEdit.FullName" class="form-control bg-dark text-light" />
+                    <span asp-validation-for="AddressToEdit.FullName" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AddressToEdit.Phone" class="form-label fw-semibold"></label>
+                    <input asp-for="AddressToEdit.Phone" class="form-control bg-dark text-light" />
+                    <span asp-validation-for="AddressToEdit.Phone" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AddressToEdit.AddressLine" class="form-label fw-semibold">Địa chỉ cụ thể</label>
+                    <input asp-for="AddressToEdit.AddressLine" class="form-control bg-dark text-light" />
+                    <span asp-validation-for="AddressToEdit.AddressLine" class="text-danger small"></span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="AddressToEdit.City" class="form-label fw-semibold">Tỉnh/Thành phố</label>
+                        <input asp-for="AddressToEdit.City" class="form-control bg-dark text-light" />
+                        <span asp-validation-for="AddressToEdit.City" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="AddressToEdit.District" class="form-label fw-semibold">Quận/Huyện</label>
+                        <input asp-for="AddressToEdit.District" class="form-control bg-dark text-light" />
+                        <span asp-validation-for="AddressToEdit.District" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AddressToEdit.Ward" class="form-label fw-semibold">Phường/Xã</label>
+                    <input asp-for="AddressToEdit.Ward" class="form-control bg-dark text-light" />
+                    <span asp-validation-for="AddressToEdit.Ward" class="text-danger small"></span>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input asp-for="AddressToEdit.IsDefault" class="form-check-input" type="checkbox" />
+                    <label asp-for="AddressToEdit.IsDefault" class="form-check-label fw-semibold">Đặt làm địa chỉ mặc định</label>
+                </div>
+
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 py-2">
+                        <i class="bi bi-save me-2"></i>Lưu thay đổi
+                    </button>
+                    <a asp-page="AddressBook" class="btn btn-secondary rounded-pill px-4 py-2">
+                        Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
