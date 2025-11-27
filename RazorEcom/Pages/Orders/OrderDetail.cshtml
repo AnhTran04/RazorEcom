@@ -12,7 +12,7 @@
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
             <div>
-                <h2 class="fw-bold text-light">@ViewData["Title"]</h2>
+                <h2 class="fw-bold text">@ViewData["Title"]</h2>
                 <small class="text-muted">Ngày đặt: @Model.Order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
             </div>
             <a asp-page="/Account/Orders" class="btn btn-outline-warning">
@@ -22,30 +22,35 @@
 
         <!-- Thông tin giao hàng & thanh toán -->
         <div class="row g-4 mb-4">
-            <div class="col-lg-6">
-                <div class="card bg-dark border-secondary shadow-sm h-100">
-                    <div class="card-header bg-gradient text-white border-0 fw-semibold">
-                        <i class="bi bi-truck me-2"></i>Thông tin giao hàng
-                    </div>
-                    <div class="card-body text-light">
-                        <p class="mb-1"><strong>@Model.Order.ShippingAddress.FullName</strong></p>
-                        <p class="mb-1">@Model.Order.ShippingAddress.Phone</p>
-                        <p class="text-muted mb-0">
-                            @Model.Order.ShippingAddress.AddressLine, 
-                            @Model.Order.ShippingAddress.Ward, 
-                            @Model.Order.ShippingAddress.District, 
-                            @Model.Order.ShippingAddress.City
-                        </p>
-                    </div>
-                </div>
-            </div>
+           <div class="col-lg-6">
+    <div class="card border-secondary shadow-sm h-100">
+        <div class="card-header bg-gradient text border-0 fw-semibold">
+            <i class="bi bi-truck me-2"></i>Thông tin giao hàng
+        </div>
+        <div class="card-body text">
+            <p class="mb-1">
+                <strong>Tên người nhận:</strong> @Model.Order.ShippingAddress.FullName
+            </p>
+            <p class="mb-1">
+                <strong>Số điện thoại:</strong> @Model.Order.ShippingAddress.Phone
+            </p>
+            <p class="text-muted mb-0">
+                <strong>Địa chỉ:</strong>
+                @Model.Order.ShippingAddress.AddressLine, 
+                @Model.Order.ShippingAddress.Ward, 
+                @Model.Order.ShippingAddress.District, 
+                @Model.Order.ShippingAddress.City
+            </p>
+        </div>
+    </div>
+</div>
 
             <div class="col-lg-6">
-                <div class="card bg-dark border-secondary shadow-sm h-100">
-                    <div class="card-header bg-gradient text-white border-0 fw-semibold">
+                <div class="card border-secondary shadow-sm h-100">
+                    <div class="card-header bg-gradient text border-0 fw-semibold">
                         <i class="bi bi-receipt me-2"></i>Trạng thái & Thanh toán
                     </div>
-                    <div class="card-body text-light">
+                    <div class="card-body text">
                         <p class="mb-2 fw-semibold">Trạng thái đơn hàng:</p>
                         <span class="badge fs-6 px-3 py-2 
                             @(Model.Order.Status.ToLower() == "pending" ? "bg-warning text-dark" :
@@ -73,13 +78,13 @@
         </div>
 
         <!-- Danh sách sản phẩm -->
-        <div class="card bg-dark border-secondary shadow-sm mb-4">
-            <div class="card-header bg-gradient text-white border-0 fw-semibold">
+        <div class="card  border-secondary shadow-sm mb-4">
+            <div class="card-header bg-gradient text border-0 fw-semibold">
                 <i class="bi bi-bag-check me-2"></i>Sản phẩm trong đơn
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-dark table-hover align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0">
                         <thead class="bg-secondary bg-opacity-25">
                             <tr>
                                 <th style="width: 40%; padding-left: 1.5rem;">Sản phẩm</th>
@@ -128,7 +133,7 @@
                     </table>
                 </div>
             </div>
-            <div class="card-footer bg-dark text-end border-secondary">
+            <div class="card-footer text-end border-secondary">
                 <h4 class="fw-bold text-warning mb-0">
                     Tổng cộng: @Model.Order.Total.ToString("N0") đ
                 </h4>
@@ -137,7 +142,7 @@
 
         <!-- Nút hành động -->
         <div class="text-end">
-            <a asp-page="/Index" class="btn btn-warning px-4 fw-semibold shadow">
+            <a asp-page="/Index" class="btn btn-continue px-4 fw-semibold shadow">
                 Tiếp tục mua sắm
             </a>
         </div>

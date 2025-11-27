@@ -1,0 +1,24 @@
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(23,6): error RZ1034: Found a malformed 'form' tag helper. Tag helpers must have a start and end tag or be self closing. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(184,7): error RZ1034: Found a malformed 'form' tag helper. Tag helpers must have a start and end tag or be self closing. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Shared\_Layout.cshtml(15,3): error RZ1034: Found a malformed 'head' tag helper. Tag helpers must have a start and end tag or be self closing. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(114,83): error CS0103: The name 'query' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(122,45): error CS0103: The name 'hasVariants' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(122,60): error CS0103: The name 'displayMin' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(122,73): error CS0103: The name 'displayMax' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(131,51): error CS0103: The name 'query' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(136,50): error CS0103: The name 'query' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(135,83): error CS0103: The name 'query' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(142,54): error CS0103: The name 'hasVariants' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(144,57): error CS0103: The name 'displayMin' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(144,71): error CS0103: The name 'displayMax' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(146,98): error CS0103: The name 'displayMin' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(150,98): error CS0103: The name 'displayMin' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(151,113): error CS0103: The name 'displayMax' does not exist in the current context [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+
+Build FAILED.
+    18 Warning(s)
+    16 Error(s)
+
+Time Elapsed 00:00:03.40
+
+Workload updates are available. Run `dotnet workload list` for more information.

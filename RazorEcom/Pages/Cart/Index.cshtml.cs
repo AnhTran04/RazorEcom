@@ -101,14 +101,14 @@ namespace RazorEcom.Pages.Cart
             var cartItem = await FindUserCartItem(cartItemId);
             if (cartItem == null)
             {
-                TempData["ErrorMessage"] = "Không tìm thấy sản phẩm trong giỏ.";
+                TempData["error"] = "Không tìm thấy sản phẩm trong giỏ.";
                 return RedirectToPage();
             }
 
             // Kiểm tra tồn kho
             if (newQuantity > cartItem.Variant.Quantity)
             {
-                TempData["ErrorMessage"] = $"Xin lỗi, chỉ còn {cartItem.Variant.Quantity} sản phẩm trong kho.";
+                TempData["error"] = $"Xin lỗi, chỉ còn {cartItem.Variant.Quantity} sản phẩm trong kho.";
                 return RedirectToPage();
             }
 
@@ -116,7 +116,7 @@ namespace RazorEcom.Pages.Cart
             cartItem.UpdatedAt = System.DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Đã cập nhật số lượng.";
+            TempData["success"] = "Đã cập nhật số lượng.";
             return RedirectToPage();
         }
 
@@ -130,11 +130,11 @@ namespace RazorEcom.Pages.Cart
             {
                 _context.CartItems.Remove(cartItem);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Đã xóa sản phẩm khỏi giỏ hàng.";
+                TempData["success"] = "Đã xóa sản phẩm khỏi giỏ hàng.";
             }
             else
             {
-                TempData["ErrorMessage"] = "Không tìm thấy sản phẩm trong giỏ.";
+                TempData["error"] = "Không tìm thấy sản phẩm trong giỏ.";
             }
 
             return RedirectToPage();

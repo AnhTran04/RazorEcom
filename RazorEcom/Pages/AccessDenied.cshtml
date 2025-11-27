@@ -1,0 +1,26 @@
+@page
+@model RazorEcom.Pages.AccessDeniedModel
+@{
+    ViewData["Title"] = "Truy cập bị từ chối";
+}
+
+<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="text-center">
+        <i class="bi bi-shield-lock-fill text-danger" style="font-size: 5rem;"></i>
+        <h1 class="display-4 fw-bold mt-3 text-danger">403 - Forbidden</h1>
+        <h2 class="mb-4">Truy cập bị từ chối</h2>
+        <p class="lead text-muted mb-5">
+            Bạn không có quyền truy cập vào trang này.<br />
+            Vui lòng liên hệ quản trị viên nếu bạn tin rằng đây là một sự nhầm lẫn.
+        </p>
+        
+        <div class="d-flex gap-3 justify-content-center">
+            <a asp-page="/Index" class="btn btn-outline-secondary px-4">
+                <i class="bi bi-house-door me-2"></i>Trang chủ
+            </a>
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary px-4">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập lại
+            </a>
+        </div>
+    </div>
+</div>

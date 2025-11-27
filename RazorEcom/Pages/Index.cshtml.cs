@@ -23,37 +23,35 @@ namespace RazorEcom.Pages
             _context = context;
         }
 
-        public List<ProductVariants> FeaturedVariants { get; set; } = new List<ProductVariants>();
+        public List<RazorEcom.Models.Products> FeaturedProducts { get; set; } = new List<RazorEcom.Models.Products>();
         public List<Category> Categories { get; set; } = new List<Category>();
 
         public async Task OnGetAsync()
         {
-            // Lấy 8 sản phẩm nổi bật mới nhất
-            FeaturedVariants = await _context.ProductVariants
-                .Include(v => v.Product)
-                .OrderByDescending(v => v.CreatedAt)
+            // Lấy 8 SẢN PHẨM mới nhất (Include Variants để lấy ID cho link Detail)
+            FeaturedProducts = await _context.Products
+                .Include(p => p.Variants)
+                .OrderByDescending(p => p.CreatedAt)
                 .Take(8)
+                .AsNoTracking()
                 .ToListAsync();
 
             Categories = await _context.Categories
                 .OrderBy(c => c.Name)
+                .AsNoTracking()
                 .ToListAsync();
-                
         }
+
         public async Task<IActionResult> OnPostAddToCart(int variantId)
         {
-            // BƯỚC 1: KIỂM TRA ĐĂNG NHẬP
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
-                // Nếu chưa đăng nhập, chuyển đến trang đăng nhập
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
-            // BƯỚC 2: LẤY HOẶC TẠO GIỎ HÀNG (BÂY GIỜ DỰA TRÊN USERID)
             CartModel cart = await GetOrCreateCartAsync(userId);
 
-            // BƯỚC 3: KIỂM TRA SẢN PHẨM TRONG GIỎ HÀNG
             var existingItem = await _context.CartItems
                 .FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.VariantId == variantId);
 
@@ -77,21 +75,16 @@ namespace RazorEcom.Pages
             return RedirectToPage("/Index");
         }
 
-        /// <summary>
-        /// Phương thức trợ giúp đã được sửa đổi để hoạt động với UserId
-        /// </summary>
         private async Task<CartModel> GetOrCreateCartAsync(string userId)
         {
-            // Tìm Cart dựa trên UserId
             CartModel cart = await _context.Carts.FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (cart == null)
             {
-                // Nếu không có Cart, tạo mới và gán UserId
                 cart = new CartModel
                 {
                     CreatedAt = DateTime.Now,
-                    UserId = userId // Gán UserId (bắt buộc)
+                    UserId = userId 
                 };
                 _context.Carts.Add(cart);
                 await _context.SaveChangesAsync();

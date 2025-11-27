@@ -12,13 +12,15 @@
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <!-- Phải có Input hidden cho Id -->
             <input type="hidden" asp-for="Product.Id" />
             <!-- Input hidden để giữ lại CreatedAt -->
             <input type="hidden" asp-for="Product.CreatedAt" />
+            <!-- Input hidden để giữ lại ImageUrl cũ nếu không upload mới -->
+            <input type="hidden" asp-for="Product.ImageUrl" />
 
             <div class="mb-3">
                 <label asp-for="Product.Name" class="form-label text-light"></label>
@@ -43,9 +45,14 @@
                 <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Product.ImageUrl" class="form-label text-light">URL Ảnh</label>
-                <input asp-for="Product.ImageUrl" class="form-control bg-dark text-light" />
-                <span asp-validation-for="Product.ImageUrl" class="text-danger"></span>
+                <label asp-for="ImageFile" class="form-label text-light">Ảnh sản phẩm</label>
+                <input asp-for="ImageFile" class="form-control bg-dark text-light" type="file" accept="image/*" onchange="previewImage(this)" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+                
+                <div class="mt-2">
+                    <img id="imagePreview" src="@(Model.Product.ImageUrl ?? "https://placehold.co/200x200?text=No+Image")" 
+                         alt="Preview" class="img-thumbnail bg-dark border-secondary" style="max-height: 200px;" />
+                </div>
             </div>
             <div class="mb-3">
                 <label asp-for="Product.Status" class="form-label text-light">Trạng thái</label>
@@ -68,4 +75,15 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 }

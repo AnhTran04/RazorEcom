@@ -2,154 +2,140 @@
 @model RazorEcom.Pages.Products.DetailModel
 @{
     ViewData["Title"] = Model.Product?.Name ?? "Chi tiết sản phẩm";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
 }
-<link href="~/css/site.css" rel="stylesheet" />
-<div class="container py-5">
-    @if (Model.Product != null && Model.DefaultVariant != null)
-    {
-        <div class="row g-5">
-            <!-- Ảnh sản phẩm -->
-            <div class="col-md-6">
-                <img id="mainProductImage"
-                     src="@Model.DefaultVariant.ImageUrl"
-                     class="img-fluid rounded-4 shadow-sm w-100"
-                     style="aspect-ratio: 1 / 1; object-fit: cover;"
-                     alt="@Model.Product.Name"
-                     onerror="this.src='https://placehold.co/600x600/212529/FFF?text=Image+Error'" />
-            </div>
 
-            <!-- Thông tin sản phẩm -->
-            <div class="col-md-6 text">
-                <h2 class="fw-bold">@Model.Product.Name</h2>
+<div class="bg-white py-5">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a href="/Products/Index" class="text-decoration-none">Cửa hàng</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@(Model.Product?.Name)</li>
+            </ol>
+        </nav>
 
-                <!-- GIÁ -->
-                <p id="mainProductPrice" class="fw-semibold text-warning fs-3 mt-3">
-                    @Model.DefaultVariant.Price.ToString("C0")
-                </p>
-
-                <!-- MÔ TẢ -->
-                <p class="text-muted">@Model.Product.Description</p>
-
-                <!-- THÔNG TIN THÊM (SKU, MATERIAL) -->
-                <div class="mb-3">
-                    <p class="mb-1">
-                        <span class="fw-semibold">SKU:</span>
-                        <span id="mainProductSku" class="text-muted">@Model.DefaultVariant.Sku</span>
-                    </p>
-                    <p class="mb-0">
-                        <span class="fw-semibold">Chất liệu:</span>
-                        <span id="mainProductMaterial" class="text-muted">@Model.DefaultVariant.Material</span>
-                    </p>
+        @if (Model.Product != null && Model.DefaultVariant != null)
+        {
+            <div class="row g-5">
+                <!-- CỘT TRÁI: ẢNH SẢN PHẨM -->
+                <div class="col-lg-6">
+                    <div class="position-relative bg-light rounded-4 overflow-hidden shadow-sm">
+                        <!-- Sử dụng Placehold.co làm fallback, phù hợp với CSP -->
+                        <img src="@(Model.DefaultVariant.ImageUrl ?? Model.Product.ImageUrl ?? "https://placehold.co/600x600?text=No+Image")"
+                             class="img-fluid w-100 object-fit-cover"
+                             style="aspect-ratio: 1/1;"
+                             alt="@Model.Product.Name"
+                             onerror="this.src='https://placehold.co/600x600?text=Error'" />
+                        
+                        @if(Model.DefaultVariant.Quantity < 1)
+                        {
+                            <span class="position-absolute top-50 start-50 translate-middle badge bg-secondary fs-5 px-4 py-2 opacity-75">HẾT HÀNG</span>
+                        }
+                    </div>
                 </div>
 
+                <!-- CỘT PHẢI: THÔNG TIN -->
+                <div class="col-lg-6">
+                    <div class="ps-lg-4">
+                        <h4 class="text-primary text-uppercase small fw-bold mb-2">@Model.Product.Brand</h4>
+                        <h1 class="display-6 fw-bold text-dark mb-3">@Model.Product.Name</h1>
+                        
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <span class="h2 fw-bold text-primary mb-0">
+                                @Model.DefaultVariant.Price.ToString("C0", culture)
+                            </span>
+                            
+                            @if (Model.DefaultVariant.Quantity > 0)
+                            {
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">
+                                    <i class="bi bi-check-circle me-1"></i> Còn @Model.DefaultVariant.Quantity
+                                </span>
+                            }
+                        </div>
 
-                <form method="post" class="mt-4">
-                    <!-- Phải có input này để gửi ID sản phẩm (Product.Id) khi POST -->
-                    <input type="hidden" asp-for="Id" />
+                        <p class="text-muted lead mb-4">@Model.Product.Description</p>
 
-                    <!-- DROPDOWN CHỌN BIẾN THỂ -->
-                    <div class="mb-3">
-                        <label for="variantSelector" class="form-label fw-semibold">Chọn phiên bản</label>
-                        <select id="variantSelector"
-                                asp-for="SelectedVariantId"
-                                asp-items="Model.VariantOptions"
-                                class="form-select bg-dark text-light">
-                        </select>
-                        <span asp-validation-for="SelectedVariantId" class="text-danger"></span>
+                        <!-- FORM CHỌN BIẾN THỂ & MUA HÀNG -->
+                        <form method="post">
+                            <input type="hidden" asp-for="Id" />
+
+                            <div class="card bg-light border-0 rounded-4 p-4 mb-4">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label for="variantSelector" class="form-label fw-bold text-uppercase small text-muted">Phiên bản (Size - Màu)</label>
+                                        <!-- Dropdown tự động chọn variant hiện tại nhờ binding -->
+                                        <select id="variantSelector" 
+                                                asp-items="Model.VariantOptions" 
+                                                class="form-select form-select-lg border-0 shadow-sm">
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label asp-for="Quantity" class="form-label fw-bold text-uppercase small text-muted">Số lượng</label>
+                                        <input asp-for="Quantity" type="number" min="1" max="@Model.DefaultVariant.Quantity"
+                                               class="form-control form-control-lg border-0 shadow-sm text-center" />
+                                    </div>
+
+                                    <div class="col-md-8 d-flex align-items-end">
+                                        <button type="submit" 
+                                                class="btn btn-primary btn-lg w-100 h-100 shadow-sm fw-bold"
+                                                @(Model.DefaultVariant.Quantity < 1 ? "disabled" : "")>
+                                            <i class="bi bi-cart-plus me-2"></i> 
+                                            @(Model.DefaultVariant.Quantity < 1 ? "Tạm Hết Hàng" : "Thêm Vào Giỏ")
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Thông số kỹ thuật nhanh -->
+                        <div class="row g-3 small text-muted">
+                            <div class="col-6">
+                                <div class="border rounded-3 p-3">
+                                    <span class="d-block text-uppercase fw-bold mb-1">Mã SKU</span>
+                                    <span>@Model.DefaultVariant.Sku</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="border rounded-3 p-3">
+                                    <span class="d-block text-uppercase fw-bold mb-1">Chất liệu</span>
+                                    <span>@Model.DefaultVariant.Material</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- SỐ LƯỢNG -->
-                    <div class="mb-3">
-                        <label asp-for="Quantity" class="form-label fw-semibold">Số lượng</label>
-                        <input asp-for="Quantity" type="number" min="1" class="form-control text" style="max-width: 100px;" />
-                        <span asp-validation-for="Quantity" class="text-danger"></span>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-2 mt-3">
-                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                    </button>
-                </form>
+                </div>
             </div>
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-danger text-center">
-            Sản phẩm không tồn tại hoặc chưa có biến thể.
-        </div>
-    }
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <h3>Sản phẩm không tồn tại</h3>
+                <a href="/" class="btn btn-primary mt-3">Về trang chủ</a>
+            </div>
+        }
+    </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
     <script>
-        // SỬA LỖI SYNTAXERROR:
-        // Dùng vòng lặp 'for' thay vì 'foreach' để xử lý dấu phẩy (,)
-        // ở cuối đối tượng, ngăn ngừa lỗi SyntaxError.
-        const variantsData = {
-            @if (Model.Product != null && Model.Product.Variants != null)
-            {
-                    // SỬA LỖI CS1061: Chuyển ICollection thành List để có thể dùng index [i]
-                    var variantsList = Model.Product.Variants.ToList();
-
-                    @for (int i = 0; i < variantsList.Count; i++)
-                    {
-                            var variant = variantsList[i]; // Đã sửa
-
-                            // Mã hóa JS an toàn cho các chuỗi
-                            var imageUrl = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(variant.ImageUrl ?? Model.Product.ImageUrl ?? "");
-                            var material = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(variant.Material ?? "");
-                            var sku = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(variant.Sku ?? "");
-
-                            @Html.Raw($"\"{variant.Id}\": {{")
-                            @Html.Raw($"\"price\": {variant.Price},")
-                            // Gửi dưới dạng số
-                            @:"\"imageUrl\": \"@imageUrl\","
-                            @:"\"material\": \"@material\","
-                            @:"\"sku\": \"@sku\""
-                            @Html.Raw("}")
-                            // Đóng object
-
-                            // Chỉ thêm dấu phẩy nếu KHÔNG phải là item cuối cùng
-                            if (i < variantsList.Count - 1) // Đã sửa
-                            {
-                                    @Html.Raw(",")
-                                ;
-                            }
-                    }
-            }
-        };
-
         document.addEventListener('DOMContentLoaded', () => {
             const variantSelect = document.getElementById('variantSelector');
-            const mainImage = document.getElementById('mainProductImage');
-            const mainPrice = document.getElementById('mainProductPrice');
-            const mainSku = document.getElementById('mainProductSku');
-            const mainMaterial = document.getElementById('mainProductMaterial');
-
-            // Định dạng tiền tệ
-            const priceFormatter = new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-                maximumFractionDigits: 0
-            });
-
+            
             if (variantSelect) {
                 variantSelect.addEventListener('change', function() {
+                    // Lấy ID từ value của option được chọn
                     const selectedId = this.value;
-                    const selectedVariantData = variantsData[selectedId];
-
-                    if (selectedVariantData) {
-                        // Cập nhật giá, ảnh, sku, và material
-                        mainImage.src = selectedVariantData.imageUrl;
-                        mainPrice.innerText = priceFormatter.format(selectedVariantData.price);
-                        mainSku.innerText = selectedVariantData.sku;
-                        mainMaterial.innerText = selectedVariantData.material;
-                    }
+                    
+                    // Chuyển hướng trình duyệt sang URL mới
+                    // Ví dụ: đang ở /Products/Detail/1 -> chọn ID 2 -> chuyển sang /Products/Detail/2
+                    window.location.href = `/Products/Detail/${selectedId}`;
                 });
             }
         });
     </script>
 }
-

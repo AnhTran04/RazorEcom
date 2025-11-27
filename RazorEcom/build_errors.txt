@@ -1,0 +1,10 @@
+﻿D:\LTWNC\webecombanquanao\RazorEcom\Pages\Products\Index.cshtml(23,6): error RZ1034: Found a malformed 'form' tag helper. Tag helpers must have a start and end tag or be self closing. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+D:\LTWNC\webecombanquanao\RazorEcom\Pages\Shared\_Layout.cshtml(15,3): error RZ1034: Found a malformed 'head' tag helper. Tag helpers must have a start and end tag or be self closing. [D:\LTWNC\webecombanquanao\RazorEcom\RazorEcom.csproj]
+
+Build FAILED.
+    22 Warning(s)
+    2 Error(s)
+
+Time Elapsed 00:00:03.66
+
+Workload updates are available. Run `dotnet workload list` for more information.

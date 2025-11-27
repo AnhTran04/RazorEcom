@@ -15,6 +15,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ImageService>();
+builder.Services.AddScoped<ReportService>();
 // Đăng ký ASP.NET Core Identity
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
@@ -22,13 +24,14 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     options.Password.RequireLowercase = true;       // Yêu cầu phải có chữ thường
     options.Password.RequireUppercase = true;       // Yêu cầu phải có chữ hoa
     options.Password.RequiredLength = 8;            // Độ dài tối thiểu (bạn nên đổi từ 6 thành 8)
-    options.Password.RequiredUniqueChars = 1;         // Số ký tự khác nhau tối thiểu trong mật khẩu
+    options.Password.RequiredUniqueChars = 1;       // Số ký tự khác nhau tối thiểu trong mật khẩu
     options.SignIn.RequireConfirmedAccount = false; // Không yêu cầu xác nhận email khi đăng ký
     options.Password.RequireNonAlphanumeric = false; // Không yêu cầu ký tự đặc biệt
 })
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
+
 // Cấu hình Session
 builder.Services.AddSession(options =>
 {
@@ -37,12 +40,28 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddRazorPages()
-   .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-        options.JsonSerializerOptions.WriteIndented = true;
-    });
+// Configure Authorization Policies
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdmin", policy => policy.RequireRole("Admin"));
+});
+
+// Configure Cookie to redirect to custom Access Denied page
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/AccessDenied";
+});
+
+builder.Services.AddRazorPages(options =>
+{
+    // Require "Admin" role for all pages in the Admin area
+    options.Conventions.AuthorizeFolder("/Admin", "RequireAdmin");
+})
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 
 var app = builder.Build();
 
@@ -70,6 +89,7 @@ catch (Exception ex)
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
     logger.LogError(ex, "Đã xảy ra lỗi khi tạo service scope cho seeder.");
 }
+
 if (app.Environment.IsDevelopment())
 {
     // ...
@@ -87,9 +107,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
 // Dòng này quan trọng, đảm bảo các trang Identity (Login, Register...) có thể được truy cập
 app.MapRazorPages();
 
 app.Run();
-

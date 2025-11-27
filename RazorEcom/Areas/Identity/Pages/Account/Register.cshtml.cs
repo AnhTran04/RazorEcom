@@ -72,6 +72,7 @@ namespace RazorEcom.Areas.Identity.Pages.Account
                     _logger.LogInformation("Người dùng mới đã được tạo.");
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
+                    // TempData["success"] = "Đăng ký tài khoản thành công!";
                     return LocalRedirect(returnUrl);
                 }
 

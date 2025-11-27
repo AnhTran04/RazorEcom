@@ -16,22 +16,20 @@ using CartModel = global::RazorEcom.Models.Cart;
 
 namespace RazorEcom.Pages.Products
 {
-    // Đặt ValidateAntiForgeryToken ở đây để bảo vệ tất cả các POST handler
     [ValidateAntiForgeryToken]
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _context;
-        private readonly CategoryService _categoryService; // <-- TỐI ƯU HÓA
+        private readonly CategoryService _categoryService;
 
-        // TỐI ƯU HÓA: Sử dụng Dependency Injection, không 'new'
         public IndexModel(ApplicationDbContext context, CategoryService categoryService)
         {
             _context = context;
-            _categoryService = categoryService; // <-- Được inject
+            _categoryService = categoryService;
         }
 
         // ================================================
-        // CÁC THUỘC TÍNH BINDING CHO BỘ LỌC (TỪ URL)
+        // CÁC THUỘC TÍNH BINDING CHO BỘ LỌC
         // ================================================
 
         [BindProperty(SupportsGet = true)]
@@ -40,7 +38,6 @@ namespace RazorEcom.Pages.Products
         [BindProperty(SupportsGet = true)]
         public string SortBy { get; set; }
 
-        // (THÊM LẠI) Các bộ lọc bị thiếu
         [BindProperty(SupportsGet = true)]
         public decimal? MinPrice { get; set; }
 
@@ -62,10 +59,14 @@ namespace RazorEcom.Pages.Products
         // ================================================
 
         public List<Category> Categories { get; set; } = new List<Category>();
-        public List<ProductVariants> ProductVariants { get; set; } = new List<ProductVariants>();
+        
+        // THAY ĐỔI: Hiển thị danh sách Product thay vì Variant
+        public List<RazorEcom.Models.Products> Products { get; set; } = new List<RazorEcom.Models.Products>();
+        
         public List<SelectListItem> SortOptions { get; set; } = new List<SelectListItem>();
 
-        // (THÊM LẠI) Danh sách cho các dropdown của bộ lọc
+        public List<ProductVariants> ProductVariants { get; set; } = new List<ProductVariants>();
+
         public List<string> Brands { get; set; } = new List<string>();
         public List<string> Colors { get; set; } = new List<string>();
         public List<string> Sizes { get; set; } = new List<string>();
@@ -77,75 +78,93 @@ namespace RazorEcom.Pages.Products
 
         public async Task OnGetAsync()
         {
-            // 1. Khởi tạo các tùy chọn (options) cho bộ lọc
             InitializeSortOptions();
             
-            // (THÊM LẠI) Tải dữ liệu cho các bộ lọc dropdown
+            // Tải dữ liệu cho các bộ lọc dropdown
             Categories = await _context.Categories.AsNoTracking().OrderBy(c => c.Name).ToListAsync();
-            Brands = await _context.Products.Where(p => p.Brand != null).Select(p => p.Brand).Distinct().OrderBy(b => b).ToListAsync();
-            Colors = await _context.ProductVariants.Where(v => v.Color != null).Select(v => v.Color).Distinct().OrderBy(c => c).ToListAsync();
-            Sizes = await _context.ProductVariants.Where(v => v.Size != null).Select(v => v.Size).Distinct().OrderBy(s => s).ToListAsync();
+            Brands = await _context.Products.Where(p => p.Brand != null).Select(p => p.Brand!).Distinct().OrderBy(b => b).ToListAsync();
+            Colors = await _context.ProductVariants.Where(v => v.Color != null).Select(v => v.Color!).Distinct().OrderBy(c => c).ToListAsync();
+            Sizes = await _context.ProductVariants.Where(v => v.Size != null).Select(v => v.Size!).Distinct().OrderBy(s => s).ToListAsync();
 
-            // 2. Xây dựng truy vấn (query) sản phẩm
-            var query = _context.ProductVariants.Include(v => v.Product).AsQueryable();
+            // 2. Xây dựng truy vấn (query) SẢN PHẨM (Products)
+            // Include Variants để tính giá min/max
+            var query = _context.Products
+                .Include(p => p.Variants)
+                .Include(p => p.Category)
+                .AsQueryable();
 
             // 3. Áp dụng các bộ lọc (filter)
             
-            // (GIỮ LẠI) Logic lọc danh mục con thông minh của bạn
+            // Lọc theo danh mục
             if (CategoryId.HasValue)
             {
                 var categoryIds = _categoryService.GetAllChildCategoryIds(CategoryId.Value);
-                query = query.Where(v => categoryIds.Contains(v.Product.CategoryId));
+                query = query.Where(p => categoryIds.Contains(p.CategoryId));
             }
 
-            // (THÊM LẠI) Các bộ lọc bị thiếu
+            // Lọc theo Brand (trên bảng Product)
+            if (!string.IsNullOrEmpty(Brand))
+            {
+                query = query.Where(p => p.Brand == Brand);
+            }
+
+            // --- CÁC BỘ LỌC LIÊN QUAN ĐẾN VARIANT (Dùng .Any()) ---
+
+            // Lọc theo Giá: Sản phẩm có ÍT NHẤT 1 biến thể nằm trong khoảng giá
             if (MinPrice.HasValue)
             {
-                query = query.Where(v => v.Price >= MinPrice.Value);
+                query = query.Where(p => p.Variants.Any(v => v.Price >= MinPrice.Value));
             }
             if (MaxPrice.HasValue)
             {
-                query = query.Where(v => v.Price <= MaxPrice.Value);
+                query = query.Where(p => p.Variants.Any(v => v.Price <= MaxPrice.Value));
             }
-            if (!string.IsNullOrEmpty(Brand))
-            {
-                query = query.Where(v => v.Product.Brand == Brand);
-            }
+
+            // Lọc theo Màu: Sản phẩm có biến thể màu này
             if (!string.IsNullOrEmpty(Color))
             {
-                query = query.Where(v => v.Color == Color);
+                query = query.Where(p => p.Variants.Any(v => v.Color == Color));
             }
+
+            // Lọc theo Size: Sản phẩm có biến thể size này
             if (!string.IsNullOrEmpty(Size))
             {
-                query = query.Where(v => v.Size == Size);
+                query = query.Where(p => p.Variants.Any(v => v.Size == Size));
             }
 
             // 4. Áp dụng sắp xếp (sort)
-            // (SỬA LẠI) Đồng bộ các giá trị (key) với file .cshtml và sửa logic "newest"
             switch (SortBy)
             {
                 case "price-asc":
-                    query = query.OrderBy(v => v.Price);
+                    // Sắp xếp theo giá thấp nhất của biến thể trong sản phẩm đó
+                    // query = query.OrderBy(p => p.Variants.Min(v => v.Price));
+                    query = query.OrderBy(p => p.Id); // Temporary fallback
                     break;
                 case "price-desc":
-                    query = query.OrderByDescending(v => v.Price);
+                    // Sắp xếp theo giá cao nhất của biến thể
+                    // query = query.OrderByDescending(p => p.Variants.Max(v => v.Price));
+                    query = query.OrderByDescending(p => p.Id); // Temporary fallback
                     break;
                 case "name-asc":
-                    query = query.OrderBy(v => v.Product.Name);
+                    query = query.OrderBy(p => p.Name);
                     break;
-                default: // "newest" hoặc mặc định
-                    // SỬA LẠI: Sắp xếp theo CreatedAt (mới nhất) thay vì Id
-                    query = query.OrderByDescending(v => v.CreatedAt); 
+                default: // "newest"
+                    query = query.OrderByDescending(p => p.CreatedAt); 
                     break;
             }
 
             // 5. Thực thi truy vấn
-            ProductVariants = await query.AsNoTracking().ToListAsync();
+            Products = await query.AsNoTracking().ToListAsync();
         }
 
         // ================================================
         // HANDLER POST (THÊM VÀO GIỎ)
         // ================================================
+        
+        // Lưu ý: Ở trang danh sách sản phẩm (Product level), ta không thể thêm vào giỏ ngay
+        // vì chưa biết user chọn Size/Màu nào.
+        // Hàm này chỉ dùng nếu bạn implement Quick View hoặc chọn default variant.
+        // Tạm thời giữ nguyên nhưng UI sẽ chuyển hướng sang Detail.
         
         public async Task<IActionResult> OnPostAddToCart(int variantId)
         {
@@ -178,7 +197,6 @@ namespace RazorEcom.Pages.Products
 
             await _context.SaveChangesAsync();
             
-            // (CẢI THIỆN UX) Quay lại trang Products với các filter được giữ nguyên
             return RedirectToPage(new 
             { 
                 CategoryId = CategoryId,
@@ -190,10 +208,6 @@ namespace RazorEcom.Pages.Products
                 Size = Size
             });
         }
-
-        // ================================================
-        // PHƯƠNG THỨC TRỢ GIÚP
-        // ================================================
 
         private async Task<CartModel> GetOrCreateCartAsync(string userId)
         {
@@ -211,8 +225,6 @@ namespace RazorEcom.Pages.Products
             return cart;
         }
 
-        // (SỬA LẠI) Dùng lại hàm InitializeSortOptions
-        // để đồng bộ giá trị (key) với file .cshtml
         private void InitializeSortOptions()
         {
             SortOptions = new List<SelectListItem>

@@ -1,76 +1,107 @@
 ﻿@page
 @model RazorEcom.Areas.Identity.Pages.Account.RegisterModel
 @{
-    ViewData["Title"] = "Đăng ký tài khoản";
+    ViewData["Title"] = "Đăng ký";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center align-items-center g-5">
-        <!-- Cột bên trái: ảnh hoặc banner -->
-        <div class="col-lg-6 text-center d-none d-lg-block">
-            <img src="~/images/register-banner.svg" alt="Register Banner" class="img-fluid w-75">
-            <h3 class="mt-4 fw-semibold text-primary">Tham gia cùng chúng tôi ngay hôm nay!</h3>
-            <p class="text-muted">Mua sắm dễ dàng, ưu đãi hấp dẫn và quản lý tài khoản tiện lợi.</p>
+<div class="container-fluid p-0 overflow-hidden bg-light" style="min-height: 100vh;">
+    <div class="row g-0 min-vh-100">
+        <!-- Left Column: Banner -->
+        <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center position-relative bg-dark overflow-hidden">
+            <div class="position-absolute w-100 h-100" style="background: linear-gradient(135deg, #111827, #374151); opacity: 0.95;"></div>
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop" 
+                 class="position-absolute w-100 h-100 object-fit-cover" 
+                 style="mix-blend-mode: overlay; opacity: 0.5;" 
+                 alt="Fashion Background">
+            
+            <div class="position-relative z-2 text-center text-white p-5" data-aos="fade-up">
+                <div class="mb-4">
+                    <i class="bi bi-person-plus-fill display-1 text-warning"></i>
+                </div>
+                <h2 class="display-4 fw-bold mb-3">Tham Gia Cùng Chúng Tôi</h2>
+                <p class="lead mb-4 opacity-75">Tạo tài khoản để theo dõi đơn hàng, lưu danh sách yêu thích và nhận ưu đãi đặc biệt.</p>
+                
+                <div class="row g-4 justify-content-center mt-2">
+                    <div class="col-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>Thanh toán nhanh</span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>Theo dõi đơn hàng</span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>Ưu đãi độc quyền</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Cột bên phải: Form đăng ký -->
-        <div class="col-md-8 col-lg-5">
-            <div class="card border-0 shadow-lg rounded-4 p-4">
-                <div class="card-body">
-                    <h2 class="text-center fw-bold text-dark mb-4">@ViewData["Title"]</h2>
-
-                    <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="needs-validation" novalidate>
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                        <div class="mb-3">
-                            <label asp-for="Input.FullName" class="form-label fw-semibold">Họ và tên</label>
-                            <input asp-for="Input.FullName" class="form-control form-control-lg" placeholder="Nguyễn Văn A" />
-                            <span asp-validation-for="Input.FullName" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Input.Email" class="form-label fw-semibold">Email</label>
-                            <input asp-for="Input.Email" class="form-control form-control-lg" placeholder="example@email.com" />
-                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Input.PhoneNumber" class="form-label fw-semibold">Số điện thoại</label>
-                            <input asp-for="Input.PhoneNumber" class="form-control form-control-lg" placeholder="0987xxxxxx" />
-                            <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Input.Password" class="form-label fw-semibold">Mật khẩu</label>
-                            <div class="input-group">
-                                <input asp-for="Input.Password" class="form-control form-control-lg" placeholder="••••••••" />
-                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                            </div>
-                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Input.ConfirmPassword" class="form-label fw-semibold">Xác nhận mật khẩu</label>
-                            <div class="input-group">
-                                <input asp-for="Input.ConfirmPassword" class="form-control form-control-lg" placeholder="Nhập lại mật khẩu" />
-                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                            </div>
-                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-pill mt-3">
-                            <i class="bi bi-person-plus"></i> Tạo tài khoản
-                        </button>
-
-                        <div class="text-center mt-4">
-                            <p class="text-muted mb-0">
-                                Đã có tài khoản?
-                                <a asp-page="./Login" class="text-decoration-none fw-semibold text-primary">Đăng nhập</a>
-                            </p>
-                        </div>
-                    </form>
+        <!-- Right Column: Form -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-white">
+            <div class="w-100 p-4 p-lg-5" style="max-width: 550px;" data-aos="fade-right">
+                <div class="text-center mb-5">
+                    <h3 class="fw-bold text-primary mb-2">Tạo Tài Khoản</h3>
+                    <p class="text-muted">Điền thông tin bên dưới để đăng ký.</p>
                 </div>
+
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 shadow-sm mb-4 rounded-3" role="alert"></div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.FullName" class="form-control bg-light border-0 rounded-3" placeholder="Họ và tên" />
+                        <label asp-for="Input.FullName" class="text-muted">Họ và tên</label>
+                        <span asp-validation-for="Input.FullName" class="text-danger small ms-1"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Email" class="form-control bg-light border-0 rounded-3" placeholder="name@example.com" />
+                        <label asp-for="Input.Email" class="text-muted">Email</label>
+                        <span asp-validation-for="Input.Email" class="text-danger small ms-1"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.PhoneNumber" class="form-control bg-light border-0 rounded-3" placeholder="Số điện thoại" />
+                        <label asp-for="Input.PhoneNumber" class="text-muted">Số điện thoại</label>
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger small ms-1"></span>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input asp-for="Input.Password" class="form-control bg-light border-0 rounded-3" placeholder="Mật khẩu" />
+                                <label asp-for="Input.Password" class="text-muted">Mật khẩu</label>
+                            </div>
+                            <span asp-validation-for="Input.Password" class="text-danger small ms-1"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input asp-for="Input.ConfirmPassword" class="form-control bg-light border-0 rounded-3" placeholder="Xác nhận" />
+                                <label asp-for="Input.ConfirmPassword" class="text-muted">Xác nhận</label>
+                            </div>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger small ms-1"></span>
+                        </div>
+                    </div>
+
+                    <button id="registerSubmit" type="submit" class="btn btn-primary w-100 btn-lg rounded-pill fw-bold shadow-lg hover-lift mb-4">
+                        Đăng Ký
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-muted mb-0">
+                            Đã có tài khoản? 
+                            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="text-primary fw-bold text-decoration-none">Đăng nhập ngay</a>
+                        </p>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

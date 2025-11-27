@@ -1,0 +1,289 @@
+@page
+@model RazorEcom.Areas.Admin.Pages.Reports.IndexModel
+@{
+    ViewData["Title"] = "Báo Cáo";
+    Layout = "_AdminLayout";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-light">
+            <i class="bi bi-file-earmark-bar-graph me-2"></i>Báo Cáo & Thống Kê
+        </h1>
+    </div>
+
+    <!-- Report Type and Filters -->
+    <div class="card bg-dark text-light border-secondary mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <!-- Report Type -->
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Loại Báo Cáo</label>
+                    <select asp-for="ReportType" class="form-select bg-secondary text-light border-0">
+                        <option value="sales">Báo Cáo Doanh Thu</option>
+                        <option value="inventory">Báo Cáo Tồn Kho</option>
+                        <option value="customer">Báo Cáo Khách Hàng</option>
+                    </select>
+                </div>
+
+                <!-- Start Date -->
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Từ Ngày</label>
+                    <input asp-for="StartDate" type="date" class="form-control bg-secondary text-light border-0" />
+                </div>
+
+                <!-- End Date -->
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Đến Ngày</label>
+                    <input asp-for="EndDate" type="date" class="form-control bg-secondary text-light border-0" />
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-2"></i>Tạo Báo Cáo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sales Report -->
+    @if (Model.SalesData != null)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-dark text-light border-success">
+                    <div class="card-header bg-success bg-opacity-10 border-success">
+                        <h5 class="mb-0">
+                            <i class="bi bi-cash-stack me-2"></i>Báo Cáo Doanh Thu
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Summary Cards -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="p-3 bg-success bg-opacity-10 rounded">
+                                    <small class="text-muted">Tổng Doanh Thu</small>
+                                    <h3 class="mb-0 text-success">@Model.SalesData.TotalRevenue.ToString("C0", culture)</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 bg-primary bg-opacity-10 rounded">
+                                    <small class="text-muted">Tổng Đơn Hàng</small>
+                                    <h3 class="mb-0 text-primary">@Model.SalesData.TotalOrders</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 bg-warning bg-opacity-10 rounded">
+                                    <small class="text-muted">Giá Trị TB/Đơn</small>
+                                    <h3 class="mb-0 text-warning">@Model.SalesData.AverageOrderValue.ToString("C0", culture)</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Products Table -->
+                        <h6 class="fw-bold mb-3">Sản Phẩm Bán Chạy</h6>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Sản Phẩm</th>
+                                        <th class="text-end">Số Lượng</th>
+                                        <th class="text-end">Doanh Thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var product in Model.SalesData.TopProducts)
+                                    {
+                                        <tr>
+                                            <td>@product.ProductName</td>
+                                            <td class="text-end">@product.Quantity.ToString("N0")</td>
+                                            <td class="text-end text-success fw-bold">@product.Revenue.ToString("C0", culture)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Export Buttons -->
+                        <div class="d-flex gap-2 mt-4">
+                            <form method="post" asp-page-handler="ExportPdf">
+                                <input type="hidden" asp-for="ReportType" />
+                                <input type="hidden" asp-for="StartDate" />
+                                <input type="hidden" asp-for="EndDate" />
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-file-earmark-pdf me-2"></i>Xuất PDF
+                                </button>
+                            </form>
+                            <form method="post" asp-page-handler="ExportExcel">
+                                <input type="hidden" asp-for="ReportType" />
+                                <input type="hidden" asp-for="StartDate" />
+                                <input type="hidden" asp-for="EndDate" />
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-file-earmark-excel me-2"></i>Xuất Excel
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Inventory Report -->
+    @if (Model.InventoryData != null)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-dark text-light border-purple">
+                    <div class="card-header bg-purple bg-opacity-10 border-purple">
+                        <h5 class="mb-0">
+                            <i class="bi bi-box-seam me-2"></i>Báo Cáo Tồn Kho
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Summary Cards -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="p-3 bg-info bg-opacity-10 rounded">
+                                    <small class="text-muted">Tổng Sản Phẩm</small>
+                                    <h3 class="mb-0 text-info">@Model.InventoryData.TotalProducts</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="p-3 bg-warning bg-opacity-10 rounded">
+                                    <small class="text-muted">Sắp Hết Hàng</small>
+                                    <h3 class="mb-0 text-warning">@Model.InventoryData.LowStockCount</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="p-3 bg-danger bg-opacity-10 rounded">
+                                    <small class="text-muted">Hết Hàng</small>
+                                    <h3 class="mb-0 text-danger">@Model.InventoryData.OutOfStockCount</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="p-3 bg-success bg-opacity-10 rounded">
+                                    <small class="text-muted">Giá Trị Tồn</small>
+                                    <h3 class="mb-0 text-success">@Model.InventoryData.TotalStockValue.ToString("C0", culture)</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stock by Category Table -->
+                        <h6 class="fw-bold mb-3">Tồn Kho Theo Danh Mục</h6>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Danh Mục</th>
+                                        <th class="text-end">Số SP</th>
+                                        <th class="text-end">Số Lượng</th>
+                                        <th class="text-end">Giá Trị</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var cat in Model.InventoryData.StockByCategory)
+                                    {
+                                        <tr>
+                                            <td>@cat.CategoryName</td>
+                                            <td class="text-end">@cat.ProductCount</td>
+                                            <td class="text-end">@cat.TotalQuantity.ToString("N0")</td>
+                                            <td class="text-end text-success fw-bold">@cat.TotalValue.ToString("C0", culture)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Export Buttons -->
+                        <div class="d-flex gap-2 mt-4">
+                            <form method="post" asp-page-handler="ExportPdf">
+                                <input type="hidden" asp-for="ReportType" />
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-file-earmark-pdf me-2"></i>Xuất PDF
+                                </button>
+                            </form>
+                            <form method="post" asp-page-handler="ExportExcel">
+                                <input type="hidden" asp-for="ReportType" />
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-file-earmark-excel me-2"></i>Xuất Excel
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Customer Report -->
+    @if (Model.CustomerData != null)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-dark text-light border-info">
+                    <div class="card-header bg-info bg-opacity-10 border-info">
+                        <h5 class="mb-0">
+                            <i class="bi bi-people me-2"></i>Báo Cáo Khách Hàng
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Summary Cards -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="p-3 bg-info bg-opacity-10 rounded">
+                                    <small class="text-muted">Tổng Khách Hàng</small>
+                                    <h3 class="mb-0 text-info">@Model.CustomerData.TotalCustomers</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 bg-success bg-opacity-10 rounded">
+                                    <small class="text-muted">Khách Hàng Mới</small>
+                                    <h3 class="mb-0 text-success">@Model.CustomerData.NewCustomers</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Customers Table -->
+                        <h6 class="fw-bold mb-3">Khách Hàng Chi Tiêu Nhiều Nhất</h6>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Tên Khách Hàng</th>
+                                        <th>Email</th>
+                                        <th class="text-end">Số Đơn</th>
+                                        <th class="text-end">Tổng Chi Tiêu</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var customer in Model.CustomerData.TopCustomers)
+                                    {
+                                        <tr>
+                                            <td>@customer.CustomerName</td>
+                                            <td>@customer.Email</td>
+                                            <td class="text-end">@customer.OrderCount</td>
+                                            <td class="text-end text-success fw-bold">@customer.TotalSpent.ToString("C0", culture)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .border-purple {
+        border-color: #6f42c1 !important;
+    }
+    .bg-purple {
+        background-color: #6f42c1 !important;
+    }
+</style>

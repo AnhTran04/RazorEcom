@@ -2,157 +2,333 @@
 @model RazorEcom.Pages.Products.IndexModel
 @{
     ViewData["Title"] = "Cửa hàng";
-    Layout = "~/Pages/Shared/_Layout.cshtml";
+    Layout= "~/Pages/Shared/_Layout.cshtml";
+
 }
-<link href="~/css/site.css" rel="stylesheet" />
+<style>
+    :root {
+        --primary-color: #0d6efd;
+        --card-hover-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        --border-radius: 12px;
+    }
+
+    body {
+        background-color: #f8f9fa; /* Màu nền xám nhẹ cho toàn trang */
+    }
+
+    /* Sidebar Styles */
+    .filter-card {
+        background: white;
+        padding: 20px;
+        border-radius: var(--border-radius);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 20px; /* Giữ sidebar khi cuộn trang */
+    }
+
+    .category-list .list-group-item {
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        transition: all 0.2s;
+        color: #555;
+    }
+
+    .category-list .list-group-item:hover {
+        background-color: #e9ecef;
+        color: var(--primary-color);
+    }
+
+    .category-list .list-group-item.active {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(13, 110, 253, 0.3);
+    }
+
+    /* Product Card Styles */
+    .product-card-wrapper {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        background: white;
+        height: 100%;
+    }
+
+    .product-card-wrapper:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--card-hover-shadow);
+    }
+
+    .product-img-container {
+        position: relative;
+        overflow: hidden;
+        aspect-ratio: 1/1;
+    }
+
+    .product-img-container img {
+        transition: transform 0.5s ease;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-card-wrapper:hover .product-img-container img {
+        transform: scale(1.05);
+    }
+
+    .price-tag {
+        color: #dc3545; /* Màu đỏ cho giá */
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .btn-detail {
+        background-color: transparent;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .btn-detail:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+</style>
 <div class="container py-5">
-    <h1 class="fw-bold text mb-4">Cửa hàng</h1>
+    <!-- Breadcrumb đơn giản (Tùy chọn) -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Trang chủ</a></li>
+            <li class="breadcrumb-item active text-primary" aria-current="page">Sản phẩm</li>
+        </ol>
+    </nav>
 
-    <form method="get" id="main-filter-form">
-        <div class="row">
-            <!-- ============================= -->
-            <!-- 1. Cột Sidebar Bộ lọc (Đã cập nhật) -->
-            <!-- ============================= -->
-            <div class="col-lg-3">
+    <div class="row g-4">
+        <!-- ============================= -->
+        <!-- 1. Cột Sidebar Bộ lọc -->
+        <!-- ============================= -->
+        <div class="col-lg-3">
+            <div class="filter-card">
+                <h4 class="fw-bold mb-4 text-primary"><i class="bi bi-funnel-fill me-2"></i>Bộ lọc</h4>
+                
+                <form method="get" id="main-filter-form">
+                    
+                    <!-- Bộ lọc Danh mục -->
+                    <div class="mb-4">
+                        <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.85rem;">Danh mục</h6>
+                        <div class="list-group category-list">
+                            <a asp-page="/Products/Index" asp-route-SortBy="@Model.SortBy" asp-route-CategoryId=""
+                               class="list-group-item list-group-item-action @(Model.CategoryId == null ? "active" : "")">
+                                <i class="bi bi-grid me-2"></i> Tất cả
+                            </a>
 
-                <!-- (ĐÃ THAY ĐỔI) Bộ lọc Danh mục (Dùng Button) -->
-                <h5 class="text fw-semibold mb-3">Danh mục</h5>
-                <div class="list-group category-sidebar">
-                    <!-- Nút "Tất cả" -->
-                    <a asp-page="/Products/Index" asp-route-SortBy="@Model.SortBy" asp-route-CategoryId=""
-                        class="list-group-item list-group-item-action @(Model.CategoryId == null ? "active" : "")">
-                        Tất cả sản phẩm
-                    </a>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <a asp-page="/Products/Index" asp-route-CategoryId="@category.Id" asp-route-SortBy="@Model.SortBy"
+                                   class="list-group-item list-group-item-action @(Model.CategoryId == category.Id ? "active" : "")">
+                                    <i class="bi bi-chevron-right small me-2" style="font-size: 0.7em;"></i> @category.Name
+                                </a>
+                            }
+                        </div>
+                    </div>
 
-                    <!-- Lặp qua các danh mục -->
-                    @foreach (var category in Model.Categories)
+                    <hr class="text-muted opacity-25 my-4">
+
+                    <!-- Bộ lọc Khoảng giá -->
+                    <div class="mb-4">
+                        <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.85rem;">Khoảng giá (VNĐ)</h6>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input asp-for="MinPrice" type="number" class="form-control form-control-sm" placeholder="Từ" min="0" />
+                            </div>
+                            <div class="col-6">
+                                <input asp-for="MaxPrice" type="number" class="form-control form-control-sm" placeholder="Đến" min="0" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bộ lọc Thương hiệu -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Thương hiệu</label>
+                        <select asp-for="Brand" class="form-select form-select-sm">
+                            <option value="">Tất cả thương hiệu</option>
+                            @foreach (var brand in Model.Brands)
+                            {
+                                <option value="@brand">@brand</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Bộ lọc Màu sắc -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Màu sắc</label>
+                        <select asp-for="Color" class="form-select form-select-sm">
+                            <option value="">Tất cả màu sắc</option>
+                            @foreach (var color in Model.Colors)
+                            {
+                                <option value="@color">@color</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Bộ lọc Kích cỡ -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small">Kích cỡ</label>
+                        <select asp-for="Size" class="form-select form-select-sm">
+                            <option value="">Tất cả kích cỡ</option>
+                            @foreach (var size in Model.Sizes)
+                            {
+                                <option value="@size">@size</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Nút Lọc -->
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold shadow-sm">
+                        Áp dụng bộ lọc
+                    </button>
+                    
+                    @if(Model.CategoryId != null || Model.MinPrice != null || Model.Brand != null)
                     {
-                        <a asp-page="/Products/Index" asp-route-CategoryId="@category.Id" asp-route-SortBy="@Model.SortBy"
-                            class="list-group-item list-group-item-action @(Model.CategoryId == category.Id ? "active" : "")">
-                            @category.Name
+                         <a asp-page="/Products/Index" class="btn btn-outline-secondary w-100 btn-sm mt-2 border-0">
+                            <i class="bi bi-arrow-counterclockwise"></i> Xóa lọc
                         </a>
                     }
-                </div>
-
-                <!-- (MỚI) Bộ lọc Khoảng giá -->
-                <h5 class="text fw-semibold mb-3 mt-4">Khoảng giá</h5>
-                <div class="d-flex align-items-center gap-2 mb-4">
-                    <input asp-for="MinPrice" type="number" class="form-control text" placeholder="Từ (₫)" />
-                    <span class="text-light">-</span>
-                    <input asp-for="MaxPrice" type="number" class="form-control text" placeholder="Đến (₫)" />
-                </div>
-
-                <!-- (MỚI) Bộ lọc Thương hiệu -->
-                <h5 class="text fw-semibold mb-3 mt-4">Thương hiệu</h5>
-                <select asp-for="Brand" class="form-select text mb-4">
-                    <option value="">Tất cả thương hiệu</option>
-                    @foreach (var brand in Model.Brands)
-                    {
-                        <option value="@brand">@brand</option>
-                    }
-                </select>
-
-                <!-- (MỚI) Bộ lọc Màu sắc -->
-                <h5 class="text fw-semibold mb-3 mt-4">Màu sắc</h5>
-                <select asp-for="Color" class="form-select text mb-4">
-                    <option value="">Tất cả màu sắc</option>
-                    @foreach (var color in Model.Colors)
-                    {
-                        <option value="@color">@color</option>
-                    }
-                </select>
-
-                <!-- (MỚI) Bộ lọc Kích cỡ -->
-                <h5 class="text fw-semibold mb-3 mt-4">Kích cỡ</h5>
-                <select asp-for="Size" class="form-select text mb-4">
-                    <option value="">Tất cả kích cỡ</option>
-                    @foreach (var size in Model.Sizes)
-                    {
-                        <option value="@size">@size</option>
-                    }
-                </select>
-
-                <!-- (MỚI) Nút Lọc -->
-                <button type="submit" class="btn btn-primary w-100 btn-lg mt-3">
-                    <i class="bi bi-filter"></i> Lọc
-                </button>
-
-            </div>
-
-            <!-- ============================= -->
-            <!-- 2. Cột Nội dung chính (Sản phẩm) -->
-            <!-- ============================= -->
-            <div class="col-lg-9">
-                <!-- Sắp xếp (Đã cập nhật) -->
-                <div class="row mb-4">
-                    <div class="col-md-6 ms-auto">
-                        <!-- Xóa <form> lồng nhau, vì nó đã là một phần của form chính -->
-                        <div class="d-flex gap-2 align-items-center">
-                            <label class="form-label text-light fw-semibold mb-0 text-nowrap">Sắp xếp:</label>
-                            <!-- Thêm ID để JS có thể bắt sự kiện 'change' -->
-                            <select asp-for="SortBy" asp-items="Model.SortOptions" class="form-select w-auto text"
-                                id="sort-by-select">
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Danh sách Sản phẩm (Không đổi) -->
-                <div class="row g-4" id="productsContainer">
-                    @if (Model.ProductVariants.Any())
-                    {
-                        @foreach (var variant in Model.ProductVariants)
-                        {
-                            <div class="col-md-4 product-card">
-                                <div class="card h-100 shadow-sm rounded-4 text">
-                                    <img src="@(variant.ImageUrl ?? "https://placehold.co/600x600/212529/FFF?text=Image+Error")"
-                                        class="card-img-top" alt="@variant.Product.Name"
-                                        style="aspect-ratio: 1/1; object-fit: cover;"
-                                        onerror="this.src='https://placehold.co/600x600/212529/FFF?text=Image+Error'" />
-
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">@variant.Product.Name</h5>
-                                        <p class="card-text text-muted small">@variant.Size - @variant.Color</p>
-                                        <p class="card-text text-warning fw-semibold fs-5">
-                                            @variant.Price.ToString("C0",
-                                            System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
-                                </p>
-                                <a asp-page="./Detail" asp-route-id="@variant.ProductId"
-                                    class="btn btn-outline mt-auto text rounded-pill mb-2">
-                                    Xem chi tiết
-                                </a>
-                                <!-- Form này vẫn hoạt động bình thường, vì nó là POST trong khi form chính là GET -->
-                                <form method="post" asp-page-handler="AddToCart">
-                                    <input type="hidden" name="variantId" value="@variant.Id" />
-                                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-2 mt-3">
-                                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                                        }
-                    }
-                    else
-                    {
-                        <div class="col-12">
-                            <div class="alert alert-warning text-center">
-                                <h4 class="alert-heading">Không tìm thấy sản phẩm!</h4>
-                                <p>Không có sản phẩm nào phù hợp với bộ lọc của bạn. Vui lòng thử lại.</p>
-                            </div>
-                        </div>
-                    }
-                </div>
+                </form>
             </div>
         </div>
-    </form>
+
+        <!-- ============================= -->
+        <!-- 2. Cột Nội dung chính (Sản phẩm) -->
+        <!-- ============================= -->
+        <div class="col-lg-9">
+            
+            <!-- Header nhỏ hiển thị số lượng kết quả (Tùy chọn trang trí) -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0 fw-bold text-dark">Danh sách sản phẩm</h5>
+                <span class="text-muted small">Tìm thấy @Model.Products.Count() kết quả</span>
+            </div>
+
+            <div class="row g-4" id="productsContainer">
+                @if (Model.Products.Any())
+                {
+                    @foreach (var product in Model.Products)
+                    {
+                        var minPrice = product.Variants.Any() ? product.Variants.Min(v => v.Price) : 0;
+                        var maxPrice = product.Variants.Any() ? product.Variants.Max(v => v.Price) : 0;
+                        var hasVariants = product.Variants.Any();
+
+                        <div class="col-md-4 col-sm-6">
+                            <div class="card h-100 product-card-wrapper">
+                                <!-- Hình ảnh -->
+                                <div class="product-img-container">
+                                    <a asp-page="./Detail" asp-route-id="@(product.Variants.FirstOrDefault()?.Id ?? 0)">
+                                        <img src="@(product.ImageUrl ?? "https://placehold.co/600x600/f0f0f0/999?text=No+Image")"
+                                             alt="@product.Name"
+                                             onerror="this.src='https://placehold.co/600x600/f0f0f0/999?text=No+Image'" />
+                                    </a>
+                                    @if (!hasVariants)
+                                    {
+                                        <span class="position-absolute top-0 start-0 badge bg-secondary m-2">Hết hàng</span>
+                                    }
+                                </div>
+
+                                <!-- Nội dung Card -->
+                                <div class="card-body d-flex flex-column p-3">
+                                    <div class="mb-2">
+                                        <!-- Tên sản phẩm -->
+                                        <h6 class="card-title mb-1 text-truncate" title="@product.Name">
+                                            <a asp-page="./Detail" asp-route-id="@(product.Variants.FirstOrDefault()?.Id ?? 0)" 
+                                               class="text-decoration-none text-dark fw-bold stretched-link">
+                                                @product.Name
+                                            </a>
+                                        </h6>
+                                        <!-- Số phiên bản -->
+                                        <small class="text-muted" style="font-size: 0.75rem;">
+                                            @(hasVariants ? $"{product.Variants.Count()} phiên bản" : "Liên hệ")
+                                        </small>
+                                    </div>
+
+                                    <!-- Giá & Nút bấm -->
+                                    <div class="mt-auto pt-2 border-top">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="price-tag">
+                                                @if (minPrice == maxPrice && minPrice > 0)
+                                                {
+                                                    @minPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
+                                                }
+                                                else if (minPrice > 0)
+                                                {
+                                                    <span>@minPrice.ToString("N0")<small>đ</small> - @maxPrice.ToString("N0")<small>đ</small></span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-secondary">Liên hệ</span>
+                                                }
+                                            </div>
+                                            
+                                            <!-- Nút nhỏ icon giỏ hàng hoặc xem -->
+                                            <span class="btn btn-sm btn-light rounded-circle text-primary">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12">
+                        <div class="text-center py-5">
+                            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" alt="Empty" style="width: 80px; opacity: 0.5;" class="mb-3">
+                            <h5 class="text-muted fw-bold">Không tìm thấy sản phẩm nào!</h5>
+                            <p class="text-secondary mb-4">Hãy thử thay đổi bộ lọc hoặc tìm kiếm từ khóa khác.</p>
+                            <a asp-page="/Products/Index" class="btn btn-primary rounded-pill px-4">
+                                Xem tất cả sản phẩm
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <!-- Phân trang (Nếu có - Placeholder) -->
+            <!-- <div class="mt-5 d-flex justify-content-center">...Code phân trang...</div> -->
+        </div>
+    </div>
 </div>
 
 <!-- ============================= -->
 <!-- 3. Element Thông báo (Toast) -->
 <!-- ============================= -->
-<!-- (Giữ nguyên như file của bạn) -->
-<div id="cart-toast" class="toast-notification" role="alert" aria-live="assertive" aria-atomic="true">
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="cart-toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-check-circle-fill me-2"></i> Thao tác thành công!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
 </div>
 
-<script src="~/js/product.js"></script>
+@section Scripts {
+    <script src="~/js/product.js"></script>
+    <script>
+        // Script nhỏ để init tooltips nếu dùng Bootstrap 5
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+}

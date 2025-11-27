@@ -6,14 +6,14 @@
     var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
 }
 <link href="~/css/site.css" rel="stylesheet" />
-<h1 class="text-light">@ViewData["Title"]</h1>
+<h1 class="text-dark">@ViewData["Title"]</h1> <!-- Đổi text-light thành text-dark -->
+
 
 <!-- 1. HÀNG THẺ THỐNG KÊ (KARD) -->
-<!-- ... (Giữ nguyên 4 thẻ kard) ... -->
 <div class="row">
     <!-- Kard Doanh thu -->
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card bg-dark text-light border-success h-100">
+        <div class="card bg-white text-dark border-success h-100"> <!-- Thêm bg-white, đổi text-light thành text-dark -->
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col me-2">
@@ -32,7 +32,7 @@
 
     <!-- Kard Đơn hàng -->
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card bg-dark text-light border-primary h-100">
+        <div class="card bg-white text-dark border-primary h-100"> <!-- bg-white, text-dark -->
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col me-2">
@@ -51,7 +51,7 @@
 
     <!-- Kard Người dùng -->
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card bg-dark text-light border-info h-100">
+        <div class="card bg-white text-dark border-info h-100"> <!-- bg-white, text-dark -->
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col me-2">
@@ -70,7 +70,7 @@
 
     <!-- Kard Sản phẩm (SKU) -->
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card bg-dark text-light border-warning h-100">
+        <div class="card bg-white text-dark border-warning h-100"> <!-- bg-white, text-dark -->
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col me-2">
@@ -89,13 +89,78 @@
 </div>
 
 <!-- ============================================= -->
+<!-- 1.5. HÀNG BÁO CÁO NHANH -->
+<!-- ============================================= -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-white text-dark border-secondary">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-file-earmark-text me-2"></i>Báo cáo nhanh</span>
+                <a asp-page="/Reports/Index" class="btn btn-sm btn-outline-dark">Xem tất cả</a>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <!-- Sales Report -->
+                    <div class="col-md-4">
+                        <form method="post" asp-area="Admin" asp-page="/Reports/Index" asp-page-handler="ExportPdf" target="_blank">
+                            <input type="hidden" name="ReportType" value="sales" />
+                            <button type="submit" class="btn btn-outline-success w-100 h-100 p-3 text-start shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-graph-up-arrow fs-3 me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">Báo cáo Doanh thu</div>
+                                        <div class="small text-muted">Xuất PDF 30 ngày qua</div>
+                                    </div>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Inventory Report -->
+                    <div class="col-md-4">
+                        <form method="post" asp-area="Admin" asp-page="/Reports/Index" asp-page-handler="ExportPdf" target="_blank">
+                            <input type="hidden" name="ReportType" value="inventory" />
+                            <button type="submit" class="btn btn-outline-warning w-100 h-100 p-3 text-start shadow-sm text-dark">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-box-seam fs-3 me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">Báo cáo Tồn kho</div>
+                                        <div class="small text-muted">Xuất PDF hiện tại</div>
+                                    </div>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Customer Report -->
+                    <div class="col-md-4">
+                        <form method="post" asp-area="Admin" asp-page="/Reports/Index" asp-page-handler="ExportPdf" target="_blank">
+                            <input type="hidden" name="ReportType" value="customer" />
+                            <button type="submit" class="btn btn-outline-info w-100 h-100 p-3 text-start shadow-sm text-dark">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-people fs-3 me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">Báo cáo Khách hàng</div>
+                                        <div class="small text-muted">Xuất PDF 30 ngày qua</div>
+                                    </div>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
 <!-- 2. HÀNG BIỂU ĐỒ MỚI -->
 <!-- ============================================= -->
 <div class="row">
     <!-- Cột Biểu đồ Doanh thu (Line Chart) -->
     <div class="col-lg-7 mb-4">
-        <div class="card bg-dark text-light h-100">
-            <div class="card-header">
+        <div class="card bg-white text-dark h-100 shadow-sm border"> <!-- bg-white, text-dark -->
+            <div class="card-header bg-white">
                 <i class="bi bi-graph-up me-2"></i>
                 Doanh thu 7 ngày qua
             </div>
@@ -107,8 +172,8 @@
     
     <!-- Cột Biểu đồ Trạng thái (Doughnut Chart) -->
     <div class="col-lg-5 mb-4">
-        <div class="card bg-dark text-light h-100">
-            <div class="card-header">
+        <div class="card bg-white text-dark h-100 shadow-sm border"> <!-- bg-white, text-dark -->
+            <div class="card-header bg-white">
                 <i class="bi bi-pie-chart-fill me-2"></i>
                 Trạng thái Đơn hàng
             </div>
@@ -126,14 +191,14 @@
 <div class="row">
     <!-- Cột Đơn hàng gần đây -->
     <div class="col-lg-7 mb-4">
-        <div class="card bg-dark text-light h-100">
-            <div class="card-header">
+        <div class="card bg-white text-dark h-100 shadow-sm border"> <!-- bg-white, text-dark -->
+            <div class="card-header bg-white">
                 <i class="bi bi-clock-history me-2"></i>
                 Đơn hàng gần đây
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-dark table-hover mb-0">
+                    <table class="table table-hover mb-0"> <!-- Bỏ table-dark -->
                         <thead>
                             <tr>
                                 <th>Mã ĐH</th>
@@ -167,14 +232,14 @@
 
     <!-- Cột Sản phẩm sắp hết hàng -->
     <div class="col-lg-5 mb-4">
-        <div class="card bg-dark text-light h-100">
-            <div class="card-header">
+        <div class="card bg-white text-dark h-100 shadow-sm border"> <!-- bg-white, text-dark -->
+            <div class="card-header bg-white">
                 <i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>
                 Sản phẩm sắp hết hàng (<= 10)
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-dark table-hover mb-0">
+                    <table class="table table-hover mb-0"> <!-- Bỏ table-dark -->
                         <thead>
                             <tr>
                                 <th>Sản phẩm</th>

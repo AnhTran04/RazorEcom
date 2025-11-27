@@ -37,9 +37,9 @@ namespace RazorEcom.Pages.Account
             // Tải dữ liệu từ user vào InputModel
             Input = new InputModel
             {
-                Email = await _userManager.GetEmailAsync(user),
+                Email = await _userManager.GetEmailAsync(user) ?? "",
                 FullName = user.FullName, // Giả sử bạn có thuộc tính FullName trong ApplicationUser
-                PhoneNumber = await _userManager.GetPhoneNumberAsync(user)
+                PhoneNumber = await _userManager.GetPhoneNumberAsync(user) ?? ""
             };
 
             return Page();

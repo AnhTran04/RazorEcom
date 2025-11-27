@@ -58,11 +58,12 @@ namespace RazorEcom.Areas.Identity.Pages.Account
                     {
                         // Nếu là Admin, luôn chuyển đến trang Dashboard của Admin
                         _logger.LogInformation("Phát hiện Admin, đang chuyển hướng đến trang Admin.");
-                        // (Đảm bảo đường dẫn /Admin/Products/Index của bạn là chính xác)
+                        // TempData["success"] = "Chào mừng Admin quay trở lại!";
                         return LocalRedirect(Url.Content("~/Admin/Products/Index"));
                     }
 
                     _logger.LogInformation("Người dùng thường, đang chuyển hướng đến returnUrl.");
+                    // TempData["success"] = "Đăng nhập thành công!";
                     return LocalRedirect(returnUrl); // Chuyển về trang cũ nếu là user thường
                 }
 
@@ -80,4 +81,3 @@ namespace RazorEcom.Areas.Identity.Pages.Account
         }
     }
 }
-
